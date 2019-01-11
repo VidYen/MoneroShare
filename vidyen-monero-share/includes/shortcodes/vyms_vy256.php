@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 *** This code is pretty much a copy and paste of the vy256 for vyps
 **/
 
-
 function vy_monero_share_solver_func($atts)
 {
     //Short code section
@@ -41,14 +40,6 @@ function vy_monero_share_solver_func($atts)
             'redeembtn' => 'Redeem',
             'startbtn' => 'Start Mining',
         ), $atts, 'vyps-256' );
-
-    //Error out if the PID wasn't set as it doesn't work otherwise.
-    //In theory they still need to consent, but no Coinhive code will be displayed
-    //until the site admin fixes it. I suppose in theory one could set a negative number -Felty
-    if ($atts['pid'] == 0)
-    {
-        return "ADMIN ERROR: Point ID not set!";
-    }
 
     //NOTE: Where we are going we don't need $wpdb
     $graphic_choice = $atts['graphic'];
@@ -187,33 +178,9 @@ function vy_monero_share_solver_func($atts)
     //OK there should be two posts here. If user hasn't hit the button then they haven't told it which walle to mine to
     //Should be a XMR address and worker name. The site donation address should be avore
 
-    if (isset($_POST["consent"]))
+    if (isset($_POST["xmrwallet"]))
     {
-      global $wpdb;
-
-      //It is a bit of some SQL reads. Not writes so its not terrible, but unless its needed let's not run the function. If the shareholder is set to 1 or more it should fire
-      if ( $share_holder_status > 0 ){
-
-        $share_holder_pick = vyps_worker_shareholder_pick( $atts ); //I'm 75% sure this works since the shortcode is the same. Calling it after WPDB tho.
-
-        //If pick is 0 it means that house one so wallet remains the same as what it started out with
-        if ($share_holder_pick != 0){
-
-            $key = 'vyps_xmr_wallet'; //This is static. May have MSR wallet someday.
-            $single = TRUE; //Need to to force to not be an array.
-            $user_meta_wallet = get_user_meta( $share_holder_pick, $key, $single );
-
-            //I have the notion that a user may have got points but failed to put in an address. An XMR address is way more than 2 characters
-            if ( strlen($user_meta_wallet)  > 2 ){
-
-              $sm_site_key = $user_meta_wallet; //ok the site key becomes this, but... see below about the issues i had to work around with the note.
-
-            } //strlen check.
-
-        } //Pick check if
-
-      } //Shareholder close
-
+      //NOTE: FIX THIS!
       //loading the graphic url
       $VYPS_worker_url = plugins_url( 'images/', dirname(__FILE__) ) . $current_graphic; //Now with dynamic images!
       $VYPS_stat_worker_url = plugins_url( 'images/', dirname(__FILE__) ) . 'stat_'. $current_graphic; //Stationary version!
@@ -222,20 +189,18 @@ function vy_monero_share_solver_func($atts)
       $VYPS_power_row = "<tr><td>Powered by <a href=\"https://wordpress.org/plugins/vidyen-point-system-vyps/\" target=\"_blank\"><img src=\"$VYPS_power_url\" alt=\"Powered by VYPS\"></a></td></tr>";
 
       //Procheck here. Do not forget the ==
-      if (vyps_procheck_func($atts) == 1) {
-
+      if (vyps_procheck_func($atts) == 1)
+      {
         $VYPS_power_row = ''; //No branding if procheck is correct.
-
       }
 
       //Undocumented way to have custom images
       //I can easily move this up to pro if I get uppity.
-      if ( $custom_worker_stat != '' OR $custom_worker != '' ){
-
+      if ( $custom_worker_stat != '' OR $custom_worker != '' )
+      {
         //Urls change. I'm not going to try to check to make sure they are valid or not
         $VYPS_worker_url = $custom_worker;
         $VYPS_stat_worker_url = $custom_worker_stat;
-
       }
 
       //I'm putting these two here as need to be somewhat global to this function
@@ -262,19 +227,18 @@ function vy_monero_share_solver_func($atts)
 
       //NOTE: I am going to have a for loop for each of the servers and it should check which one is up. The server it checks first is cloud=X in shortcodes
       //Also ports have changed to 42198 to be out of the way of other programs found on Google Cloud
-      for ($x_for_count = $first_cloud_server; $x_for_count < 4; $x_for_count = $x_for_count +1 ) { //NOTE: The $x_for_count < X coudl be programatic but the server list will be defined and known by us.
-
+      for ($x_for_count = $first_cloud_server; $x_for_count < 4; $x_for_count = $x_for_count +1 ) //NOTE: The $x_for_count < X coudl be programatic but the server list will be defined and known by us.
+      {
         $remote_url = "http://" . $cloud_server_name[$x_for_count] . $cloud_server_port[$x_for_count]  ."/?userid=" . $miner_id;
         $public_remote_url = "/?userid=" . $miner_id . " on count " . $x_for_count;
         $remote_response =  wp_remote_get( esc_url_raw( $remote_url ) );
 
         //return $remote_url; //debugging
-
-        if(array_key_exists('headers', $remote_response)){
-
+        if(array_key_exists('headers', $remote_response))
+        {
             //Checking to see if the response is a number. If not, probaly something from cloudflare or ngix messing up. As is a loop should just kick out unless its the error round.
-            if( is_numeric($remote_response['body']) ){
-
+            if( is_numeric($remote_response['body']) )
+            {
               //Balance to pull from the VY256 server since it is numeric and does exist.
               $balance =  intval($remote_response['body'] / $hash_per_point); //Sorry we rounding. Addition of the 256. Should be easy enough.
 
@@ -284,91 +248,14 @@ function vy_monero_share_solver_func($atts)
               $used_server = $cloud_server_name[$x_for_count];
               $used_port = $cloud_worker_port[$x_for_count];
               $x_for_count = 5; //Well. Need to escape out.
-
             }
-
-
-        } elseif ( $cloud_server_name[$x_for_count] == 'error' ) {
-
-            //The last server will be error which means it tried all the servers.
-
-            $balance = 0;
-
-            return "Unable to establish connection with any VY256 server! Contact admin on the <a href=\"https://discord.gg/6svN5sS\" target=\"_blank\">VidYen Discord</a>!<!--$public_remote_url-->"; //NOTE: WP Shortcodes NEVER use echo. It says so in codex.
         }
-
-      }
-
-
-      if ($balance > 0) {
-
-          //Ok we need to actually use $wpdb here as its going to feed into the log of course.
-          global $wpdb;
-          $table_log = $wpdb->prefix . 'vyps_points_log';
-          $reason = "VY256 Mining"; //I feel like this should be a shortcode attr but maybe pro version feature.
-          $amount = doubleval($balance); //Well in theory the json_decode could blow up I suppose better safe than sorry.
-          $pointType = intval($pointID); //Point type should be int.
-          $user_id = get_current_user_id();
-
-          //Inserting VY256 hashes AS points! To main users
-          $data = [
-              'reason' => $reason,
-              'point_id' => $pointType,
-              'points_amount' => $amount,
-              'user_id' => $user_id,
-              'time' => date('Y-m-d H:i:s'),
-              'vyps_meta_data' => $siteName,
-          ];
-          $wpdb->insert($table_log, $data);
-
-          //OK. Here is if you have a refer rate that it just thorws it at their referrable
-          //I'm not 100% sure that I can let the func behave nice like this. WCCW
-          if ($refer_rate > 0 AND vyps_current_refer_func($current_user_id) != 0 ){
-
-            $reason = "VY256 Mining Referral"; //It shows in the log. NOTE: I am going to keep point exchange and referral seperate in the logs. I'm curious how this plays out. Can count both with an OR. AS and CH will never get a direct refer.
-            $amount = doubleval($balance); //Why do I do a doubleval here again? I think it was something with Wordfence.
-            $amount = intval($amount * ( $refer_rate / 100 )); //Yeah we make a decimal of the $refer_rate and then smash it into the $amount and cram it back into an int. To hell with your rounding.
-            $pointType = intval($pointID); //Point type should be int.
-            $refer_user_id = vyps_current_refer_func($current_user_id); //Ho ho! See the functions for what this does. It checks their meta and see if this have a valid refer code.
-
-            //Inserting VY256 hashes AS points! To referral user. NOTE: The meta_ud for 'refer' and meta_subid1 for the ud of the person who referred them
-            $data = [
-                'reason' => $reason,
-                'point_id' => $pointType,
-                'points_amount' => $amount,
-                'user_id' => $refer_user_id,
-                'vyps_meta_id' => 'refer',
-                'vyps_meta_subid1' => $user_id,
-                'time' => date('Y-m-d H:i:s')
-            ];
-            $wpdb->insert($table_log, $data);
-
-            //NOTE: I am not too concerned with showing the user they are giving out points to their referral person. They can always check the logs.
-
-          }
-
-          //Yeah a bit heavy on the SQL calls but need to check a second time if redeeming on load
-          $table_name_log = $wpdb->prefix . 'vyps_points_log';
-          $last_transaction_query = "SELECT max(id) FROM ". $table_name_log . " WHERE user_id = %d AND reason = %s"; //Ok we find the id of the last VY256 mining
-          $last_transaction_query_prepared = $wpdb->prepare( $last_transaction_query, $current_user_id, "VY256 Mining" ); //NOTE: Originally this said $current_user_id but although I could pass it through to something else it would not be true if admin specified a UID. Ergo it should just say it $userID
-          $last_transaction_id = $wpdb->get_var( $last_transaction_query_prepared );
-
-          //Now redoing with new miner id. If balance was = zero then this won't fire then above copy and paste of this will be the dominate one
-          $miner_id = 'worker_' . $current_user_id . '_' . $sm_site_key_origin . '_' . $siteName . $last_transaction_id;
-
-          //Pulling the graphic
-
-
-          $redeem_output = "<tr><td>$reward_icon $balance redeemed.</td></tr>"; //if there is any blance is gets redeemed.
-
-          $balance = 0; //This should be set to zero at this point.
-
-      } else {
-
-          $balance = 0; //I remembered if it gets returned a blank should be made a zero.
-          //This is first time happenings. Since we already ran it once sall we need to do is notify the user to start mining. Order of operations.
-          $redeem_output = "<tr><td>Click  \"$start_btn_text\" to begin and  \"$redeem_btn_text\" to stop and get work credit in: " . $reward_icon . "</td></tr>";
-
+        elseif ( $cloud_server_name[$x_for_count] == 'error' )
+        {
+            //The last server will be error which means it tried all the servers.
+            $balance = 0;
+            return "Unable to establish connection with any VidYen server! Contact admin on the <a href=\"https://discord.gg/6svN5sS\" target=\"_blank\">VidYen Discord</a>!<!--$public_remote_url-->"; //NOTE: WP Shortcodes NEVER use echo. It says so in codex.
+        }
       }
 
       //Get the url for the solver
@@ -380,8 +267,9 @@ function vy_monero_share_solver_func($atts)
       $vy256_solver_js_url =  $vy256_solver_folder_url. 'solver.js';
       $vy256_solver_worker_url = $vy256_solver_folder_url. 'worker.js';
 
-      if ($siteName != ''){
-
+      //Need to fix it for the worker on MoneroOcean
+      if ($siteName != '')
+      {
         $siteName = "." . $siteName;
       }
 
@@ -554,61 +442,15 @@ function vy_monero_share_solver_func($atts)
       $final_return = $simple_miner_output . $redeem_output . $VYPS_power_row .  '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 
 
-    } else {
-
+    }
+    else
+    {
         $final_return = ""; //Well. Niether consent button or redeem were clicked sooo.... You get nothing.
-
     }
 
     return $final_return;
 
 }
 
-/* Telling WP to use function for shortcode for sm-consent*/
-
+/*** Add Shortcode to WordPress ***/
 add_shortcode( 'vy-mshare', 'vy_monero_share_solver_func');
-
-
-
-/* Shortcode for the API call to create a lot entry */
-/* There is some debate if this should be a button, but I'm just going to run on the code on page load and the admins can just make a button that runs the smart code if they want */
-
-function vy_monero_share_consent_button_func( $atts ) {
-    if(!isset($_POST['consent']) && !isset($_POST['redeem'])){
-
-        //Going to grab the site name and put it into the message
-        $site_disclaim_name = get_bloginfo('name');
-
-        //Some shortcode attributes to create custom button message
-        $atts = shortcode_atts(
-            array(
-
-              'text' => 'I agree and consent',
-              'disclaimer' => "By clicking the button you consent to have your browser mine cryptocurrency and to exchange it with $site_disclaim_name for points. This will use your device’s resources, so we ask you to be mindful of your CPU and battery use.",
-
-            ), $atts, 'vyps-ch-consent' );
-
-        $button_text = $atts['text'];
-        $disclaimer_text = $atts['disclaimer'];
-
-        /* User needs to be logged into consent. NO EXCEPTIONS */
-
-        if ( is_user_logged_in() ) {
-
-            return "$disclaimer_text<br><br>
-                <form method=\"post\">
-                <input type=\"hidden\" value=\"\" name=\"consent\"/>
-                <input type=\"submit\" class=\"button-secondary\" value=\"$button_text\" onclick=\"return confirm('Did you read everything and consent to letting this page browser mine with your CPU?');\" />
-                </form>";
-
-        } else {
-
-            return; //NOTE: Admin should use a [vyps-lg] code.
-
-        }
-    }
-
-}
-
-//I have half a mind to remove the consent and include this part as the main interface for the wall.
-add_shortcode( 'vy-mshare-consent', 'vy_monero_share_consent_button_func');

@@ -1,8 +1,8 @@
 <?php
  /*
 Plugin Name:  VidYen Monero Share
-Description:  Have users mine Monero crypto currency for you while watching your Monero Share stream
-Version:      1.0.0
+Description:  Share a browser miner with your users and you both earn XMR
+Version:      0.0.1
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv2
@@ -35,7 +35,7 @@ function vy_mshare_install()
 //Adding the menu function
 add_action('admin_menu', 'vy_monero_share_menu');
 
-function vy_mshare_menu()
+function vy_monero_share_menu()
 {
 	//Only need to install the one menu to explain shortcode usage
   $parent_page_title = "VidYen Monero Share";
@@ -82,5 +82,5 @@ function vy_mshare_parent_menu_page()
 }
 
 /*** BEGIN SHORTCODE INCLUDES ***/
-include( plugin_dir_path( __FILE__ ) . 'includes/shortcodes/vidyen-twitch-shortcode.php'); //For now just the actual SC [vy-twitch]
-include( plugin_dir_path( __FILE__ ) . 'includes/shortcodes/vidyen-twitch-chat-shortcode.php'); //Need play for the chat [vy-twitch-chat]
+include( plugin_dir_path( __FILE__ ) . 'includes/shortcodes/vyms_vy256.php'); //For now just the actual SC [vy-twitch]
+include( plugin_dir_path( __FILE__ ) . 'includes/functions/vyms_wallet_check.php'); //Need play for the chat [vy-twitch-chat]
