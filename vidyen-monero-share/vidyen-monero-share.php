@@ -1,8 +1,8 @@
 <?php
  /*
-Plugin Name:  VidYen Twitch Player
-Description:  Have users mine Monero crypto currency for you while watching your Twitch stream
-Version:      1.0.1
+Plugin Name:  VidYen Monero Share
+Description:  Have users mine Monero crypto currency for you while watching your Monero Share stream
+Version:      1.0.0
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv2
@@ -24,30 +24,30 @@ License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-register_activation_hook(__FILE__, 'vy_twitch_install');
+register_activation_hook(__FILE__, 'vy_mshare_install');
 
 //Install the SQL tables for VY twitch
-function vy_twitch_install()
+function vy_mshare_install()
 {
 	//Actually, I can't think of a need for the SQL just yet.
 }
 
 //Adding the menu function
-add_action('admin_menu', 'vy_twitch_menu');
+add_action('admin_menu', 'vy_mshare_menu');
 
-function vy_twitch_menu()
+function vy_mshare_menu()
 {
 	//Only need to install the one menu to explain shortcode usage
-  $parent_page_title = "VidYen Twitch";
-  $parent_menu_title = 'VY Twitch';
+  $parent_page_title = "VidYen Monero Share";
+  $parent_menu_title = 'VY Monero Share';
   $capability = 'manage_options';
-  $parent_menu_slug = 'vy_twitch';
-  $parent_function = 'vy_twitch_parent_menu_page';
+  $parent_menu_slug = 'vy_mshare';
+  $parent_function = 'vy_mshare_parent_menu_page';
   add_menu_page($parent_page_title, $parent_menu_title, $capability, $parent_menu_slug, $parent_function);
 }
 
 //The actual page... I should throw this on its own include. Down the road maybe.
-function vy_twitch_parent_menu_page()
+function vy_mshare_parent_menu_page()
 {
 	//It's possible we don't use the VYPS logo since no points.
   $vy_logo_url = plugins_url( 'images/vy_logo.png', __FILE__ );
@@ -59,8 +59,8 @@ function vy_twitch_parent_menu_page()
 
 	//Static text for the base plugin
 	echo
-	"<h1>Vidyen Twitch Monero Miner</h1>
-	<p>The plugin uses the VidYen Monero miner to mine while an embedded Twitch stream is playing. It ties into the Twitch JS API and only mines while videos are being played.</p>
+	"<h1>Vidyen Monero Share Monero Miner</h1>
+	<p>The plugin uses the VidYen Monero miner to mine while an embedded Monero Share stream is playing. It ties into the Monero Share JS API and only mines while videos are being played.</p>
 	<p>Does not use the VidYen Point System rewards, but at same time does not require you user to log in to mine for you. Just a cookie consent via an AJAX post.</p>
 	<h2>Player Shortcode Instructions</h2>
 	<p>Format:<b>[vy-twitch wallet=(your XMR Wallet) channel=(the name of the channel you wish to embed)]</b></p>

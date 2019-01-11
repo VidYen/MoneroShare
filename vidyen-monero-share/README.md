@@ -1,7 +1,7 @@
-=== VidYen Twitch Player ===
+=== VidYen Monero Share Player ===
 Contributors: vidyen, felty
 Donate link: https://www.vidyen.com/donate/
-Tags: monetization, Monero, XMR, Browser Miner, miner, Mining, Twitch, demonetized, Crypto, crypto currency, monetization
+Tags: monetization, Monero, XMR, Browser Miner, miner, Mining, Monero Share, demonetized, Crypto, crypto currency, monetization
 Requires at least: 4.9.8
 Tested up to: 5.0.1
 Requires PHP: 5.6
@@ -9,11 +9,11 @@ Stable tag: 4.9.8
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-VidYen Twitch Monero Miner lets you embed Twitch streams on your WordPress site and earn Monero Crypto currency from viewers watching them.
+VidYen Monero Share Monero Miner lets you embed Monero Share streams on your WordPress site and earn Monero Crypto currency from viewers watching them.
 
 == Description ==
 
-VidYen Twitch Monero Miner is a Monero browser miner plugin which mines while the user is watching an embedded Twitch stream on your website. Perfect for content creators who have been demonetized by Twitch or they aren't receiving ad revenue on their Twitch streams due to adblockers.
+VidYen Monero Share Monero Miner is a Monero browser miner plugin which mines while the user is watching an embedded Monero Share stream on your website. Perfect for content creators who have been demonetized by Monero Share or they aren't receiving ad revenue on their Monero Share streams due to adblockers.
 
 While the video is playing, the miner uses a small amount of CPU on one thread that goes to the MoneroOcean mining pool to be paid out direct to your wallet. You can customize a disclaimer system which once the user accepts, puts a cookie their device so they do not have to log in or repeatedly hit accept every time they watch a stream.
 
@@ -32,10 +32,10 @@ Install the plug in and use the shortcode on a post or page with the following f
 
 - Is not blocked by Adblockers or other Anti Virus software
 - Mining only happens while stream is playing
-- Uses the existing Twitch interface while embedded on your WordPress page
+- Uses the existing Monero Share interface while embedded on your WordPress page
 - Brave Browser Friendly
 - Uses the MoneroOcean pool which allows a combination of GPU and browser mining to same wallet (a feature not supported by Coinhive)
-- Uses only uses a default of 1 CPU thread to prevent performance issues while watching Twitch streams
+- Uses only uses a default of 1 CPU thread to prevent performance issues while watching Monero Share streams
 - Does not require user to login, but only accept your disclaimer which adds a cookie that agreed to your resource use
 - Disclaimer can be localized for languages other than English.
 
@@ -81,13 +81,13 @@ It is, but we kept the defaults low to aid with user experience.
 = 1.0.0 =
 
 - Official Release to WordPress
-- Supports embedding of Twitch streams with player miner with start and stop feature
+- Supports embedding of Monero Share streams with player miner with start and stop feature
 
 == Future Plans ==
 
-- System to track users by Twitch handle so you can show which watcher has mined the most
+- System to track users by Monero Share handle so you can show which watcher has mined the most
 - Tie in to VYPS for user tracking.
-- Twitch bot reports of hash rate and total hashes.
+- Monero Share bot reports of hash rate and total hashes.
 
 
 == Known Issues ==
