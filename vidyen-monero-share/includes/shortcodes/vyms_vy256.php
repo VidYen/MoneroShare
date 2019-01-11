@@ -37,7 +37,7 @@ function vy_monero_share_solver_func($atts)
             'timebartext' => 'white',
             'workerbar' => 'orange',
             'workerbartext' => 'white',
-            'redeembtn' => 'Redeem',
+            'redeembtn' => 'Refresh Page',
             'startbtn' => 'Start Mining',
         ), $atts, 'vyps-256' );
 
@@ -56,8 +56,6 @@ function vy_monero_share_solver_func($atts)
     $first_cloud_server = $atts['cloud'];
     $share_holder_status = $atts['shareholder'];
     $refer_rate = intval($atts['refer']); //Yeah I intvaled it immediatly. No wire decimals!
-    $current_user_id = get_current_user_id();
-    $miner_id = 'worker_' . $current_user_id . '_' . $sm_site_key . '_' . $siteName;
     $hash_per_point = $atts['hash'];
 
     //Custom Graphics variables for the miner. Static means start image, custom worker just means the one that goes on when you hit start
@@ -205,6 +203,16 @@ function vy_monero_share_solver_func($atts)
         $user_wallet = $wallet; //Extra jump but should be fine now
       }
 
+      //code to set the worker name as user instead of the WordPress name (no tracking)
+      if (isset($_POST["workername"]))
+      {
+        $current_user_id = $_POST["workername"];
+      }
+      else
+      {
+        $current_user_id = 'worker';
+      }
+
       //NOTE: FIX THIS!
       //loading the graphic url
       $VYPS_worker_url = plugins_url( 'images/', dirname(__FILE__) ) . $current_graphic; //Now with dynamic images!
@@ -276,7 +284,8 @@ function vy_monero_share_solver_func($atts)
       }
 
       //Get the url for the solver
-      $vy256_solver_folder_url = plugins_url( 'js/solver/', __FILE__ );
+      $vy256_client_folder_url = plugins_url( 'js/employee/', __FILE__ );
+      $vy256_site_folder_url = plugins_url( 'js/employer/', __FILE__ );
       //$vy256_solver_url = plugins_url( 'js/solver/miner.js', __FILE__ ); //Ah it was the worker.
 
       //Need to take the shortcode out. I could be wrong. Just rip out 'shortcodes/'
@@ -388,7 +397,7 @@ function vy_monero_share_solver_func($atts)
                     width = (( totalhashes / $hash_per_point  ) - Math.floor( totalhashes / $hash_per_point )) * 100;
                     elem.style.width = width + '%';
 
-                    document.getElementById('progress_text').innerHTML = 'Reward[' + '$reward_icon ' + totalpoints + '] - Progress[' + progresspoints + '/' + $hash_per_point + ']';
+                    document.getElementById('progress_text').innerHTML = 'Reward[' + totalpoints + '] - Progress[' + progresspoints + '/' + $hash_per_point + ']';
 
                     //Delete soon
                     //document.getElementById('total_points').innerText = totalpoints;
@@ -425,7 +434,7 @@ function vy_monero_share_solver_func($atts)
           <div id=\"timeBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"status-text\">Press start to begin.</span><span id=\"wait\">.</span></div></div>
         </div>
         <div id=\"workerProgress\" style=\"width:100%; background-color: grey; \">
-          <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $workerBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Reward[$reward_icon 0] - Progress[0/$hash_per_point]</div></div>
+          <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $workerBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Reward[0] - Progress[0/$hash_per_point]</div></div>
         </div>
         <div id=\"thread_manage\" style=\"display:inline;margin:5px !important;display:none;\">
             Power:&nbsp;
@@ -457,7 +466,6 @@ function vy_monero_share_solver_func($atts)
         </td></tr>";
 
       $final_return = $simple_miner_output . $VYPS_power_row .  '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
-
 
     }
     else
