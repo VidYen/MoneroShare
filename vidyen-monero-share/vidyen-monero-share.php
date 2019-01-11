@@ -24,7 +24,7 @@ License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-register_activation_hook(__FILE__, 'vy_mshare_install');
+register_activation_hook(__FILE__, 'vy_monero_share_install');
 
 //Install the SQL tables for VY twitch
 function vy_mshare_install()
@@ -33,7 +33,7 @@ function vy_mshare_install()
 }
 
 //Adding the menu function
-add_action('admin_menu', 'vy_mshare_menu');
+add_action('admin_menu', 'vy_monero_share_menu');
 
 function vy_mshare_menu()
 {

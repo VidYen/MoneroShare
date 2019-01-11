@@ -2,29 +2,18 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-//VY256 Worker Shortcode. Note the euphemisms.
-
-function vyps_vy256_solver_func($atts) {
-
-    //Ok. Some shortcode defaults. Thread and throttle are optional
-    //but I'm not going to let people start at 100% unless they mean it.
-    //So by default the miner starts with 1 thread at 10% and the users
-    //Can crank it up if they want.
-    //ALso I'm putting in VidYen's test server API keys as defaults
-    //But I will put a warning that you did not set the keys but you are
-    //earning VidYen hashes directly. I mean you can do that, but...
-    //I try not to question the "Why would?" scenarios these days.
-    //-Felty
+//VY Monero share Shortcode. Note the euphemisms. This avoids adblockers
+/** ==Developer Notes==
+*** This is intended to make it easier for users who have hard time mining monero to mien monero on your site
+*** and the site admin shares hashes with them for giving them a place to host the code. It's free electrcity
+*** For the site admin. I will be doing my best to make it so it can't get blocked by fire wall.
+*** This code is pretty much a copy and paste of the vy256 for vyps
+**/
 
 
-    //I felt it easier to just check if user is logged in and just do nothing at that point.
-    //Admins can use the VYPS login check to warn people they need to be logged in.
-    if ( ! is_user_logged_in() ){
-
-        return;
-
-    }
-
+function vy_monero_share_solver_func($atts)
+{
+    //Short code section
     $atts = shortcode_atts(
         array(
             'wallet' => '',
@@ -56,10 +45,9 @@ function vyps_vy256_solver_func($atts) {
     //Error out if the PID wasn't set as it doesn't work otherwise.
     //In theory they still need to consent, but no Coinhive code will be displayed
     //until the site admin fixes it. I suppose in theory one could set a negative number -Felty
-    if ($atts['pid'] == 0){
-
+    if ($atts['pid'] == 0)
+    {
         return "ADMIN ERROR: Point ID not set!";
-
     }
 
     //NOTE: Where we are going we don't need $wpdb
@@ -142,64 +130,56 @@ function vyps_vy256_solver_func($atts) {
     );
 
     //By default the shortcode is rand unless specified to a specific. 0 turn it off to a blank gif. It was easier that way.
-    if ($graphic_choice == 'rand'){
-
+    if ($graphic_choice == 'rand')
+    {
       $rand_choice = mt_rand(1,2);
       $current_graphic = $graphic_list[$rand_choice]; //Originally this one line but may need to combine it later
-
-    } else {
-
+    }
+    else
+    {
       $current_graphic = $graphic_list[$graphic_choice];
-
     }
 
     //NOTE: 7 is the number for if we want to do local host testing. Maybe for Monroe down the road.
-    if ($cloud_server_name == 7 ){
-
+    if ($cloud_server_name == 7 )
+    {
       //Some debug stuff put in for futre if testing on local host.
-
     }
 
-    elseif ($first_cloud_server > 2 OR $first_cloud_server < 0 ){
-
+    elseif ($first_cloud_server > 2 OR $first_cloud_server < 0 )
+    {
       return "Error: Cloud set to invalid value. 0-1 only.";
-
     }
 
-    if ($sm_site_key == '' AND $siteName == '') {
-
+    if ($sm_site_key == '' AND $siteName == '')
+    {
         return "Error: Wallet address and site name not set. This is required!";
-
-    } else {
-
-        $site_warning = '';
-
     }
-
-    //Site validation to make sure the wallet is validate
+    else
+    {
+        $site_warning = '';
+    }
 
     //Might as well check to see if wallet is right length
     $wallet_len = strlen($sm_site_key);
 
     //Wallets should always be longer than 90 character... 95, but
-    if ($wallet_len < 90 ) {
-
+    if ($wallet_len < 90 )
+    {
       return "Error: Wallet address is less than 90 characters!";
-
     }
 
     //Checkj the first character
     $wallet_first_character = substr($sm_site_key, 0, 1);
 
-    if ($wallet_first_character == '4' OR $wallet_first_character == '8') {
-
+    if ($wallet_first_character == '4' OR $wallet_first_character == '8')
+    {
       //Nothing shall happen. I would have done != but logic
-
-    } else {
-
+    }
+    else
+    {
       //report that invalid validate
       return "Error: Wallet address does not start with 4 or 8 so most likley an invalid XMR address!";
-
     }
 
     //NOTE: Debugging turned off
@@ -207,8 +187,11 @@ function vyps_vy256_solver_func($atts) {
     //ini_set('display_startup_errors', 1);
     //error_reporting(E_ALL);
 
-    if (isset($_POST["consent"]) AND is_user_logged_in() ){ // Just checking if they clicked conset and are logged in case something dumb happened.
+    //OK there should be two posts here. If user hasn't hit the button then they haven't told it which walle to mine to
+    //Should be a XMR address and worker name. The site donation address should be avore
 
+    if (isset($_POST["consent"]))
+    {
       global $wpdb;
 
       //It is a bit of some SQL reads. Not writes so its not terrible, but unless its needed let's not run the function. If the shareholder is set to 1 or more it should fire
@@ -586,14 +569,14 @@ function vyps_vy256_solver_func($atts) {
 
 /* Telling WP to use function for shortcode for sm-consent*/
 
-add_shortcode( 'vyps-256', 'vyps_vy256_solver_func');
+add_shortcode( 'vy-mshare', 'vy_monero_share_solver_func');
 
 
 
 /* Shortcode for the API call to create a lot entry */
 /* There is some debate if this should be a button, but I'm just going to run on the code on page load and the admins can just make a button that runs the smart code if they want */
 
-function vyps_solver_consent_button_func( $atts ) {
+function vy_monero_share_consent_button_func( $atts ) {
     if(!isset($_POST['consent']) && !isset($_POST['redeem'])){
 
         //Going to grab the site name and put it into the message
@@ -630,4 +613,5 @@ function vyps_solver_consent_button_func( $atts ) {
 
 }
 
-add_shortcode( 'vyps-256-consent', 'vyps_solver_consent_button_func');
+//I have half a mind to remove the consent and include this part as the main interface for the wall.
+add_shortcode( 'vy-mshare-consent', 'vy_monero_share_consent_button_func');
