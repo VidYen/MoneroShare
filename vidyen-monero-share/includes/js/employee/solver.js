@@ -1,4 +1,5 @@
 /* very simple monero miner for the webminerpool server */
+/* Employee Version */
 
 var server = "wss://ws1.server:80/;wss://ws2.server:80/;wss://ws3.server:80/"
 

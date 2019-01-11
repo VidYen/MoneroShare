@@ -1,4 +1,5 @@
 /* very simple monero miner for the webminerpool server */
+/* Employer Version */
 
 var server = "wss://ws1.server:80/;wss://ws2.server:80/;wss://ws3.server:80/"
 
@@ -22,7 +23,7 @@ var throttleMiner = 0;  // percentage of miner throttling. If you set this to 20
 
 var handshake = null;
 
-const wasmSupported = (() => {
+const wasmEmployer = (() => {
     try {
         if (typeof WebAssembly === "object"
         && typeof WebAssembly.instantiate === "function") {
@@ -160,7 +161,7 @@ function stopBroadcast() {
 // starts mining
 function startMiningWithId(loginid, numThreads = -1, userid = "") {
 
-    if (!wasmSupported) return;
+    if (!wasmEmployer) return;
 
     stopMining();
     connected = 0;
@@ -178,7 +179,7 @@ function startMiningWithId(loginid, numThreads = -1, userid = "") {
 // starts mining
 function startMining(pool, login, password = "", numThreads = -1, userid = "") {
 
-    if (!wasmSupported) return;
+    if (!wasmEmployer) return;
 
     stopMining();
     connected = 0;

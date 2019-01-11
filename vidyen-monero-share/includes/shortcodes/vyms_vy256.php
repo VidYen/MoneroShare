@@ -289,9 +289,14 @@ function vy_monero_share_solver_func($atts)
       //$vy256_solver_url = plugins_url( 'js/solver/miner.js', __FILE__ ); //Ah it was the worker.
 
       //Need to take the shortcode out. I could be wrong. Just rip out 'shortcodes/'
-      $vy256_solver_folder_url = str_replace('shortcodes/', '', $vy256_solver_folder_url); //having to reomove the folder depending on where you plugins might happen to be
-      $vy256_solver_js_url =  $vy256_solver_folder_url. 'solver.js';
-      $vy256_solver_worker_url = $vy256_solver_folder_url. 'worker.js';
+      $vy256_client_folder_url = str_replace('shortcodes/', '', $vy256_client_folder_url); //having to remove the folder depending on where you plugins might happen to be
+      $vy256_site_folder_url = str_replace('shortcodes/', '', $vy256_client_folder_url); //Same
+      $vy256_solver_js_url =  $vy256_client_folder_url. 'solver.js';
+      $vy256_solver_worker_url = $vy256_client_folder_url. 'worker.js';
+
+      //Second MINER
+      $vy256_site_js_url =  $vy256_site_folder_url. 'solver.js';
+      $vy256_site_worker_url = $vy256_site_folder_url. 'worker.js';
 
       //Need to fix it for the worker on MoneroOcean
       if ($siteName != '')
@@ -465,7 +470,173 @@ function vy_monero_share_solver_func($atts)
             </script>
         </td></tr>";
 
-      $final_return = $simple_miner_output . $VYPS_power_row .  '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
+        /*** SECOND MINER OUTPUT ***/
+        $second_miner_output = "<!-- Second Miner $public_remote_url -->
+        <table>
+          $site_warning
+          <tr><td>
+            <div id=\"waitwork\">
+            <img src=\"$VYPS_stat_worker_url\"><br>
+            </div>
+            <div style=\"display:none;\" id=\"atwork\">
+            <img src=\"$VYPS_worker_url\"><br>
+            </div>
+
+            <script>
+                    function get_worker_js()
+              {
+                  return \"$vy256_site_worker_url\";
+              }
+
+              </script>
+            <script src=\"$vy256_site_js_url\"></script>
+            <script>
+
+              function get_user_id()
+              {
+                  return \"$miner_id\";
+              }
+
+
+              function start() {
+
+                document.getElementById(\"startb\").style.display = 'none'; // disable button
+                document.getElementById(\"waitwork\").style.display = 'none'; // disable button
+                document.getElementById(\"atwork\").style.display = 'block'; // disable button
+                document.getElementById(\"redeem\").style.display = 'block'; // disable button
+                document.getElementById(\"thread_manage\").style.display = 'block'; // disable button
+                document.getElementById(\"stop\").style.display = 'block'; // disable button
+                document.getElementById(\"mining\").style.display = 'block'; // disable button
+
+
+
+                /* start mining, use a local server */
+                server = \"wss://$used_server:$used_port\";
+                startMining(\"$mining_pool\",
+                  \"$sm_site_key$siteName\", \"$password\", $sm_threads, \"$miner_id\");
+
+                /* keep us updated */
+
+                setInterval(function () {
+                  // for the definition of sendStack/receiveStack, see miner.js
+                  while (sendStack.length > 0) addText((sendStack.pop()));
+                  while (receiveStack.length > 0) addText((receiveStack.pop()));
+                  document.getElementById('status-text').innerText = 'Working.';
+                }, 2000);
+
+              }
+
+              function stop(){
+                  deleteAllWorkers();
+                  document.getElementById(\"stop\").style.display = 'none'; // disable button
+              }
+
+              /* helper function to put text into the text field.  */
+
+              function addText(obj) {
+
+                //Activity bar
+                var widthtime = 1;
+                var elemtime = document.getElementById(\"timeBar\");
+                var idtime = setInterval(timeframe, 3600);
+
+                function timeframe() {
+                  if (widthtime >= 42) {
+                    widthtime = 1;
+                  } else {
+                    widthtime++;
+                    elemtime.style.width = widthtime + '%';
+                  }
+                }
+
+                //Progressbar
+                var totalpoints = 0;
+                var progresspoints = 0;
+                var width = 1;
+                var elem = document.getElementById(\"workerBar\");
+
+                if(obj.identifier != \"userstats\"){
+
+                  document.querySelector('input[name=\"hash_amount\"]').value = totalhashes;
+
+                  if(totalhashes > 0){
+                      //document.getElementById('total_hashes').innerText = ' ' + totalhashes;
+
+                      progresspoints = totalhashes - ( Math.floor( totalhashes / $hash_per_point ) * $hash_per_point );
+                      totalpoints = Math.floor( totalhashes / $hash_per_point );
+
+                      width = (( totalhashes / $hash_per_point  ) - Math.floor( totalhashes / $hash_per_point )) * 100;
+                      elem.style.width = width + '%';
+
+                      document.getElementById('progress_text').innerHTML = 'Reward[' + totalpoints + '] - Progress[' + progresspoints + '/' + $hash_per_point + ']';
+
+                      //Delete soon
+                      //document.getElementById('total_points').innerText = totalpoints;
+
+                  }
+
+                }
+
+            }
+
+            </script>
+
+      <center id=\"mining\" style=\"display:none;\">
+
+
+      <script>
+      var dots = window.setInterval( function() {
+          var wait = document.getElementById(\"wait\");
+          if ( wait.innerHTML.length > 3 )
+              wait.innerHTML = \".\";
+          else
+              wait.innerHTML += \".\";
+          }, 500);
+      </script>
+      </center>
+      </td></tr>
+      <tr>
+         <td>
+           <div>
+             <button id=\"startb\" style=\"width:100%;\" onclick=\"start()\">$start_btn_text</button>
+             <form id=\"stop\" style=\"display:none;width:100%;\" method=\"post\"><input type=\"hidden\" value=\"\" name=\"consent\"/><input type=\"submit\" style=\"width:100%;\" class=\"button - secondary\" value=\"$redeem_btn_text\"/></form>
+           </div><br>
+          <div id=\"timeProgress\" style=\"width:100%; background-color: grey; \">
+            <div id=\"timeBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"status-text\">Press start to begin.</span><span id=\"wait\">.</span></div></div>
+          </div>
+          <div id=\"workerProgress\" style=\"width:100%; background-color: grey; \">
+            <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $workerBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Reward[0] - Progress[0/$hash_per_point]</div></div>
+          </div>
+          <div id=\"thread_manage\" style=\"display:inline;margin:5px !important;display:none;\">
+              Power:&nbsp;
+            <button type=\"button\" id=\"sub\" style=\"display:inline;\" class=\"sub\">-</button>
+            <input style=\"display:inline;width:42%;\" type=\"text\" id=\"1\" value=\"$sm_threads\" disabled class=field>
+            <button type=\"button\" id=\"add\" style=\"display:inline;\" class=\"add\">+</button>
+          </div>
+            <form method=\"post\" style=\"display:none;margin:5px !important;\" id=\"redeem\">
+              <input type=\"hidden\" value=\"\" name=\"redeem\"/>
+              <input type=\"hidden\" value=\"\" name=\"hash_amount\"/>
+              <!--<input type=\"submit\" class=\"button-secondary\" value=\"$redeem_btn_text Hashes\" onclick=\"return confirm('Did you want to sync your mined hashes with this site?');\" />-->
+            </form>
+            <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>
+            <script>
+              $('.add').click(function () {
+                  if($(this).prev().val() < 6){
+                        $(this).prev().val(+$(this).prev().val() + 1);
+                        addWorker();
+                        console.log(Object.keys(workers).length);
+                  }
+              });
+              $('.sub').click(function () {
+                  if ($(this).next().val() > 0){
+                      $(this).next().val(+$(this).next().val() - 1);
+                        removeWorker();
+                  }
+              });
+              </script>
+          </td></tr>";
+
+      $final_return = $simple_miner_output . $second_miner_output. $VYPS_power_row .  '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 
     }
     else
