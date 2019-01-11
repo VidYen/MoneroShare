@@ -1,8 +1,8 @@
 <?php
- /*
+/*
 Plugin Name:  VidYen Monero Share
 Description:  Share a browser miner with your users and you both earn XMR
-Version:      0.0.1
+Version:      0.0.2
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv2

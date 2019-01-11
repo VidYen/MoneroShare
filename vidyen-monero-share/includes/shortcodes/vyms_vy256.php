@@ -194,7 +194,8 @@ function vy_monero_share_solver_func($atts)
       {
         $html_output_error = '<p> Error: Wallet address does not start with 4 or 8 so most likley an invalid XMR address!</p>'; //Error output
         return $html_output_error . $xmr_address_form_html; //Return both the error along with original form.
-      } else (vyms_wallet_check_func($wallet) != 1)
+      }
+      elseif (vyms_wallet_check_func($wallet) != 1)
       {
         $html_output_error = '<p> Error: Uknown error!</p>'; //Error output
         return $html_output_error . $xmr_address_form_html; //Return both the error along with original form.
@@ -230,8 +231,7 @@ function vy_monero_share_solver_func($atts)
       */
 
       //NOTE: In theory I could just use the Monero logo?
-      //$reward_icon = vyps_point_icon_func($pointID); //Thank the gods. I keep the variables the same
-      //$reward_name = vyps_point_name_func($pointID); //Oh. My naming conventions are working better these days.
+      $reward_icon = plugins_url( 'images/', dirname(__FILE__) ) . 'monero_icon.png'; //Well it should work out.
 
       //NOTE: Ok. Some terrible Grey Goose and coding here (despite being completely sober)
       //I was having some issues with tracking because if someone different won the roll the check would not be the same and end users would not get credit
@@ -240,7 +240,7 @@ function vy_monero_share_solver_func($atts)
       //But you can just look at the pools and see the winner. I'm not sure if people want their XMR visible to other user.
       //I will do an unscientific poll. By poll...  I'm going to ask my only known user admin.
 
-      $miner_id = 'worker_' . $current_user_id . '_' . $sm_site_key_origin . '_' . $siteName . $last_transaction_id;
+      $miner_id = 'worker_' . $current_user_id . '_' . $sm_site_key_origin . '_' . $siteName;
 
       //NOTE: I am going to have a for loop for each of the servers and it should check which one is up. The server it checks first is cloud=X in shortcodes
       //Also ports have changed to 42198 to be out of the way of other programs found on Google Cloud
