@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /*** Functionalized XMR wallet check since it might haeppen several times ***/
 
-function vyms_wallet_check_func( $wallet )
+function vy_monero_share_wallet_check_func( $wallet )
 {
 	//Might as well check to see if wallet is right length
 	$wallet_len = strlen($wallet);
@@ -29,5 +29,4 @@ function vyms_wallet_check_func( $wallet )
 	}
 
 	return 0; //No clude what happened. Return a general 0
-
 }
