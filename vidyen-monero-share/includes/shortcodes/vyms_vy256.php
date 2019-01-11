@@ -456,7 +456,7 @@ function vy_monero_share_solver_func($atts)
             </script>
         </td></tr>";
 
-      $final_return = $simple_miner_output . $redeem_output . $VYPS_power_row .  '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
+      $final_return = $simple_miner_output . $VYPS_power_row .  '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 
 
     }
