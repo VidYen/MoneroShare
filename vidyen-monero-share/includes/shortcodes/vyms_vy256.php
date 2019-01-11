@@ -151,21 +151,22 @@ function vy_monero_share_solver_func($atts)
         $site_warning = '';
     }
 
-    //See if the xmrpost as been set
+    //This variable needs to be set for prosperity regardless of POST value
+    $xmr_address_form_html = '
+    <form method="post">
+      XMR Wallet Address:<br>
+      <input type="text" name="xmrwallet" value="" required>
+      <br>
+      Wroker Name:<br>
+      <input type="text" name="workername" value="worker">
+      <br><br>
+      <input type="submit" value="Submit">
+    </form>
+      ';
+
+    //Default display if no post is set
     if ( !isset($_POST['xmrwallet']))
     {
-      $xmr_address_form_html = '
-      <form method="post">
-        XMR Wallet Address:<br>
-        <input type="text" name="xmrwallet" value="" required>
-        <br>
-        Wroker Name:<br>
-        <input type="text" name="workername" value="worker">
-        <br><br>
-        <input type="submit" value="Submit">
-      </form>
-        ';
-
         return $xmr_address_form_html;
     }
 
@@ -180,6 +181,29 @@ function vy_monero_share_solver_func($atts)
 
     if (isset($_POST["xmrwallet"]))
     {
+      //Check to see if the walelt is actually validate
+      $wallet = $_POST["xmrwallet"];
+
+      if (vyms_wallet_check_func($wallet) == 3) //This means that the wallet lenght was no longer than 90 characters
+      {
+        $html_output_error = '<p>Error: Wallet Address not longer than 90! Possible invalid XMR Address!</p>'; //Error output
+
+        return $html_output_error . $xmr_address_form_html; //Return both the error along with original form.
+      }
+      elseif (vyms_wallet_check_func($wallet) == 2) //This means the wallet does not start with a 4 or 8
+      {
+        $html_output_error = '<p> Error: Wallet address does not start with 4 or 8 so most likley an invalid XMR address!</p>'; //Error output
+        return $html_output_error . $xmr_address_form_html; //Return both the error along with original form.
+      } else (vyms_wallet_check_func($wallet) != 1)
+      {
+        $html_output_error = '<p> Error: Uknown error!</p>'; //Error output
+        return $html_output_error . $xmr_address_form_html; //Return both the error along with original form.
+      }
+      else
+      {
+        $user_wallet = $wallet; //Extra jump but should be fine now
+      }
+
       //NOTE: FIX THIS!
       //loading the graphic url
       $VYPS_worker_url = plugins_url( 'images/', dirname(__FILE__) ) . $current_graphic; //Now with dynamic images!
@@ -188,6 +212,7 @@ function vy_monero_share_solver_func($atts)
 
       $VYPS_power_row = "<tr><td>Powered by <a href=\"https://wordpress.org/plugins/vidyen-point-system-vyps/\" target=\"_blank\"><img src=\"$VYPS_power_url\" alt=\"Powered by VYPS\"></a></td></tr>";
 
+      /* //Turning off procheck for now
       //Procheck here. Do not forget the ==
       if (vyps_procheck_func($atts) == 1)
       {
@@ -202,19 +227,11 @@ function vy_monero_share_solver_func($atts)
         $VYPS_worker_url = $custom_worker;
         $VYPS_stat_worker_url = $custom_worker_stat;
       }
+      */
 
-      //I'm putting these two here as need to be somewhat global to this function
-      //NOTE: Any time you see something that says func, its in teh includes/function folder.
-      //Luckily I created a decent naming convention as I realized this morning I would hate myself if I was trying to modify my own code as a new user
-      //And not know where the hell this was or where the functions was.
-      $reward_icon = vyps_point_icon_func($pointID); //Thank the gods. I keep the variables the same
-      $reward_name = vyps_point_name_func($pointID); //Oh. My naming conventions are working better these days.
-
-      //Ok. We are makign the mining unique. I might need to drop the _ but we will see if monroe made it required. If so, then I'll just drop the _ and combine it with user name.
-      $table_name_log = $wpdb->prefix . 'vyps_points_log';
-      $last_transaction_query = "SELECT max(id) FROM ". $table_name_log . " WHERE user_id = %d AND reason = %s AND vyps_meta_data = %s"; //Ok we find the id of the last VY256 mining
-      $last_transaction_query_prepared = $wpdb->prepare( $last_transaction_query, $current_user_id, "VY256 Mining", $siteName ); //NOTE: Originally this said $current_user_id but although I could pass it through to something else it would not be true if admin specified a UID. Ergo it should just say it $userID
-      $last_transaction_id = $wpdb->get_var( $last_transaction_query_prepared );
+      //NOTE: In theory I could just use the Monero logo?
+      //$reward_icon = vyps_point_icon_func($pointID); //Thank the gods. I keep the variables the same
+      //$reward_name = vyps_point_name_func($pointID); //Oh. My naming conventions are working better these days.
 
       //NOTE: Ok. Some terrible Grey Goose and coding here (despite being completely sober)
       //I was having some issues with tracking because if someone different won the roll the check would not be the same and end users would not get credit
@@ -449,7 +466,6 @@ function vy_monero_share_solver_func($atts)
     }
 
     return $final_return;
-
 }
 
 /*** Add Shortcode to WordPress ***/
