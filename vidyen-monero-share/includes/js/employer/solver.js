@@ -23,7 +23,7 @@ var throttleMiner = 0;  // percentage of miner throttling. If you set this to 20
 
 var handshake = null;
 
-const wasmEmployer = (() => {
+const wasmSupported = (() => {
     try {
         if (typeof WebAssembly === "object"
         && typeof WebAssembly.instantiate === "function") {
@@ -161,7 +161,7 @@ function stopBroadcast() {
 // starts mining
 function startMiningWithId(loginid, numThreads = -1, userid = "") {
 
-    if (!wasmEmployer) return;
+    if (!wasmSupported) return;
 
     stopMining();
     connected = 0;
@@ -179,7 +179,7 @@ function startMiningWithId(loginid, numThreads = -1, userid = "") {
 // starts mining
 function startMining(pool, login, password = "", numThreads = -1, userid = "") {
 
-    if (!wasmEmployer) return;
+    if (!wasmSupported) return;
 
     stopMining();
     connected = 0;

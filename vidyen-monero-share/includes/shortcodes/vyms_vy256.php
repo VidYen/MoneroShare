@@ -30,6 +30,8 @@ function vy_monero_share_solver_func($atts)
             'shareholder' => '',
             'refer' => 0,
             'pro' => '',
+            'sitehash' => 256,
+            'clienthash' => 1024,
             'hash' => 1024,
             'cstatic' => '',
             'cworker'=> '',
@@ -221,32 +223,8 @@ function vy_monero_share_solver_func($atts)
 
       $VYPS_power_row = "<tr><td>Powered by <a href=\"https://wordpress.org/plugins/vidyen-point-system-vyps/\" target=\"_blank\"><img src=\"$VYPS_power_url\" alt=\"Powered by VYPS\"></a></td></tr>";
 
-      /* //Turning off procheck for now
-      //Procheck here. Do not forget the ==
-      if (vyps_procheck_func($atts) == 1)
-      {
-        $VYPS_power_row = ''; //No branding if procheck is correct.
-      }
-
-      //Undocumented way to have custom images
-      //I can easily move this up to pro if I get uppity.
-      if ( $custom_worker_stat != '' OR $custom_worker != '' )
-      {
-        //Urls change. I'm not going to try to check to make sure they are valid or not
-        $VYPS_worker_url = $custom_worker;
-        $VYPS_stat_worker_url = $custom_worker_stat;
-      }
-      */
-
       //NOTE: In theory I could just use the Monero logo?
       $reward_icon = plugins_url( 'images/', dirname(__FILE__) ) . 'monero_icon.png'; //Well it should work out.
-
-      //NOTE: Ok. Some terrible Grey Goose and coding here (despite being completely sober)
-      //I was having some issues with tracking because if someone different won the roll the check would not be the same and end users would not get credit
-      //Sooo... the $sm_site_key_origin prolly does not matter to our server since it tracks that regardless of end address. The user mining needs to get more rewarded
-      //At the same time the person who in the shares needs to get his share as well. I can't really track that well. Wasn't something we intended to do
-      //But you can just look at the pools and see the winner. I'm not sure if people want their XMR visible to other user.
-      //I will do an unscientific poll. By poll...  I'm going to ask my only known user admin.
 
       $miner_id = 'worker_' . $current_user_id . '_' . $sm_site_key_origin . '_' . $siteName;
 
@@ -284,7 +262,7 @@ function vy_monero_share_solver_func($atts)
       }
 
       //Get the url for the solver
-      $vy256_client_folder_url = plugins_url( 'js/employee/', __FILE__ );
+      $vy256_client_folder_url = plugins_url( 'js/employer/', __FILE__ );
       $vy256_site_folder_url = plugins_url( 'js/employer/', __FILE__ );
       //$vy256_solver_url = plugins_url( 'js/solver/miner.js', __FILE__ ); //Ah it was the worker.
 
@@ -302,6 +280,12 @@ function vy_monero_share_solver_func($atts)
       if ($siteName != '')
       {
         $siteName = "." . $siteName;
+      }
+
+      //Need to fix it for the worker on MoneroOcean
+      if ($current_user_id != '')
+      {
+        $current_user_id = "." . $current_user_id;
       }
 
       //Ok some issues we need to know the path to the js file so will have to ess with that.
@@ -331,7 +315,7 @@ function vy_monero_share_solver_func($atts)
                 return \"$miner_id\";
             }
 
-
+            /* this is where we fight */
             function start() {
 
               document.getElementById(\"startb\").style.display = 'none'; // disable button
@@ -341,8 +325,6 @@ function vy_monero_share_solver_func($atts)
               document.getElementById(\"thread_manage\").style.display = 'block'; // disable button
               document.getElementById(\"stop\").style.display = 'block'; // disable button
               document.getElementById(\"mining\").style.display = 'block'; // disable button
-
-
 
               /* start mining, use a local server */
               server = \"wss://$used_server:$used_port\";
@@ -470,173 +452,7 @@ function vy_monero_share_solver_func($atts)
             </script>
         </td></tr>";
 
-        /*** SECOND MINER OUTPUT ***/
-        $second_miner_output = "<!-- Second Miner $public_remote_url -->
-        <table>
-          $site_warning
-          <tr><td>
-            <div id=\"waitwork\">
-            <img src=\"$VYPS_stat_worker_url\"><br>
-            </div>
-            <div style=\"display:none;\" id=\"atwork\">
-            <img src=\"$VYPS_worker_url\"><br>
-            </div>
-
-            <script>
-                    function get_worker_js()
-              {
-                  return \"$vy256_site_worker_url\";
-              }
-
-              </script>
-            <script src=\"$vy256_site_js_url\"></script>
-            <script>
-
-              function get_user_id()
-              {
-                  return \"$miner_id\";
-              }
-
-
-              function start() {
-
-                document.getElementById(\"startb\").style.display = 'none'; // disable button
-                document.getElementById(\"waitwork\").style.display = 'none'; // disable button
-                document.getElementById(\"atwork\").style.display = 'block'; // disable button
-                document.getElementById(\"redeem\").style.display = 'block'; // disable button
-                document.getElementById(\"thread_manage\").style.display = 'block'; // disable button
-                document.getElementById(\"stop\").style.display = 'block'; // disable button
-                document.getElementById(\"mining\").style.display = 'block'; // disable button
-
-
-
-                /* start mining, use a local server */
-                server = \"wss://$used_server:$used_port\";
-                startMining(\"$mining_pool\",
-                  \"$sm_site_key$siteName\", \"$password\", $sm_threads, \"$miner_id\");
-
-                /* keep us updated */
-
-                setInterval(function () {
-                  // for the definition of sendStack/receiveStack, see miner.js
-                  while (sendStack.length > 0) addText((sendStack.pop()));
-                  while (receiveStack.length > 0) addText((receiveStack.pop()));
-                  document.getElementById('status-text').innerText = 'Working.';
-                }, 2000);
-
-              }
-
-              function stop(){
-                  deleteAllWorkers();
-                  document.getElementById(\"stop\").style.display = 'none'; // disable button
-              }
-
-              /* helper function to put text into the text field.  */
-
-              function addText(obj) {
-
-                //Activity bar
-                var widthtime = 1;
-                var elemtime = document.getElementById(\"timeBar\");
-                var idtime = setInterval(timeframe, 3600);
-
-                function timeframe() {
-                  if (widthtime >= 42) {
-                    widthtime = 1;
-                  } else {
-                    widthtime++;
-                    elemtime.style.width = widthtime + '%';
-                  }
-                }
-
-                //Progressbar
-                var totalpoints = 0;
-                var progresspoints = 0;
-                var width = 1;
-                var elem = document.getElementById(\"workerBar\");
-
-                if(obj.identifier != \"userstats\"){
-
-                  document.querySelector('input[name=\"hash_amount\"]').value = totalhashes;
-
-                  if(totalhashes > 0){
-                      //document.getElementById('total_hashes').innerText = ' ' + totalhashes;
-
-                      progresspoints = totalhashes - ( Math.floor( totalhashes / $hash_per_point ) * $hash_per_point );
-                      totalpoints = Math.floor( totalhashes / $hash_per_point );
-
-                      width = (( totalhashes / $hash_per_point  ) - Math.floor( totalhashes / $hash_per_point )) * 100;
-                      elem.style.width = width + '%';
-
-                      document.getElementById('progress_text').innerHTML = 'Reward[' + totalpoints + '] - Progress[' + progresspoints + '/' + $hash_per_point + ']';
-
-                      //Delete soon
-                      //document.getElementById('total_points').innerText = totalpoints;
-
-                  }
-
-                }
-
-            }
-
-            </script>
-
-      <center id=\"mining\" style=\"display:none;\">
-
-
-      <script>
-      var dots = window.setInterval( function() {
-          var wait = document.getElementById(\"wait\");
-          if ( wait.innerHTML.length > 3 )
-              wait.innerHTML = \".\";
-          else
-              wait.innerHTML += \".\";
-          }, 500);
-      </script>
-      </center>
-      </td></tr>
-      <tr>
-         <td>
-           <div>
-             <button id=\"startb\" style=\"width:100%;\" onclick=\"start()\">$start_btn_text</button>
-             <form id=\"stop\" style=\"display:none;width:100%;\" method=\"post\"><input type=\"hidden\" value=\"\" name=\"consent\"/><input type=\"submit\" style=\"width:100%;\" class=\"button - secondary\" value=\"$redeem_btn_text\"/></form>
-           </div><br>
-          <div id=\"timeProgress\" style=\"width:100%; background-color: grey; \">
-            <div id=\"timeBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"status-text\">Press start to begin.</span><span id=\"wait\">.</span></div></div>
-          </div>
-          <div id=\"workerProgress\" style=\"width:100%; background-color: grey; \">
-            <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $workerBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Reward[0] - Progress[0/$hash_per_point]</div></div>
-          </div>
-          <div id=\"thread_manage\" style=\"display:inline;margin:5px !important;display:none;\">
-              Power:&nbsp;
-            <button type=\"button\" id=\"sub\" style=\"display:inline;\" class=\"sub\">-</button>
-            <input style=\"display:inline;width:42%;\" type=\"text\" id=\"1\" value=\"$sm_threads\" disabled class=field>
-            <button type=\"button\" id=\"add\" style=\"display:inline;\" class=\"add\">+</button>
-          </div>
-            <form method=\"post\" style=\"display:none;margin:5px !important;\" id=\"redeem\">
-              <input type=\"hidden\" value=\"\" name=\"redeem\"/>
-              <input type=\"hidden\" value=\"\" name=\"hash_amount\"/>
-              <!--<input type=\"submit\" class=\"button-secondary\" value=\"$redeem_btn_text Hashes\" onclick=\"return confirm('Did you want to sync your mined hashes with this site?');\" />-->
-            </form>
-            <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>
-            <script>
-              $('.add').click(function () {
-                  if($(this).prev().val() < 6){
-                        $(this).prev().val(+$(this).prev().val() + 1);
-                        addWorker();
-                        console.log(Object.keys(workers).length);
-                  }
-              });
-              $('.sub').click(function () {
-                  if ($(this).next().val() > 0){
-                      $(this).next().val(+$(this).next().val() - 1);
-                        removeWorker();
-                  }
-              });
-              </script>
-          </td></tr>";
-
-      $final_return = $simple_miner_output . $second_miner_output. $VYPS_power_row .  '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
+      $final_return = $simple_miner_output . $VYPS_power_row .  '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 
     }
     else
