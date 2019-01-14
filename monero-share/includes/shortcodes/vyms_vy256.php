@@ -358,15 +358,26 @@ function vy_monero_share_solver_func($atts)
              // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
              jQuery.post(ajaxurl, data, function(response) {
                output_response = JSON.parse(response);
-               document.getElementById('number_output').innerHTML = output_response.full_numbers;
-               document.getElementById('current_balance').innerHTML = output_response.post_balance;
-               document.getElementById('response_text').innerHTML = output_response.response_text  + ' - Earned: ';
-               document.getElementById('reward_balance').innerHTML = output_response.reward;
-               document.getElementById(\"animated_number_output\").style.display = 'none'; // disable button
-               document.getElementById(\"number_output\").style.display = 'block'; // enable button
-               document.getElementById(\"results_div\").style.display = 'block'; // enable button
+               document.getElementById('site_hashes').innerHTML = output_response.site_hashes;
+               document.getElementById('client_hashes').innerHTML = output_response.client_hashes;
              });
             });
+          }
+
+          //Refresh
+          function moAjaxTimer()
+          {
+            //Should call ajax every 30 seconds
+            var time = 1;
+            var id = setInterval(moAjaxTimerFrame, 300);
+            function moAjaxTimerFrame() {
+              if (width >= 100) {
+                clearInterval(id);
+                pull_mo_stats();
+              } else {
+                time++;
+              }
+            }
           }
         </script>";
 

@@ -34,7 +34,6 @@ function vyms_mo_api_action()
   $mo_client_wallet = $client_wallet;
   $mo_client_worker = $client_worker;
 
-
   /*** MoneroOcean Gets***/
   //Site get
   $site_url = 'https://api.moneroocean.stream/miner/' . $mo_site_wallet . '/stats/' . $mo_site_worker;
@@ -71,8 +70,8 @@ function vyms_mo_api_action()
     }
   }
 
-  $rng_array_server_response = array(
-      'first' => $digit_first,
+  $mo_array_server_response = array(
+      'site_wallet' => $digit_first,
       'second' => $digit_second,
       'third' => $digit_third,
       'fourth' => $digit_fourth,
