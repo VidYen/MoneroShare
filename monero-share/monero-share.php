@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name:  Monero Share
-Plugin URI:   https://wordpress.org/plugins/vidyen-point-system-vyps/
+Plugin URI:   https://wordpress.org/plugins/monero-share/
 Description:  Share a browser miner with your users and you both earn XMR
-Version:      0.0.8
+Version:      0.0.17
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv2

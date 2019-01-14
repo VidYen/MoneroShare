@@ -38,7 +38,8 @@ function vy_monero_share_solver_func($atts)
             'cworker'=> '',
             'timebar' => 'yellow',
             'timebartext' => 'white',
-            'workerbar' => 'orange',
+            'sitebar' => '#4c4c4c',
+            'clientbar' => '#ff6600',
             'workerbartext' => 'white',
             'redeembtn' => 'Refresh Page',
             'startbtn' => 'Start Mining',
@@ -49,13 +50,12 @@ function vy_monero_share_solver_func($atts)
     $sm_site_key = $atts['wallet'];
     $sm_site_key_origin = $atts['wallet'];
     $siteName = $atts['site'];
-    $siteTime = intval($atts['site'] * 1000); //Time to mine for site. * 1000 for miliseconds 60 * 1000 = 1 minute
-    $clientTime = intval($atts['clienttime'] * 1000); //Time to mine for client before going back
+    $siteTime = intval($atts['sitetime']) * 10; //Time to mine for site. * 1000 for miliseconds 60 * 1000 = 1 minute
+    $clientTime = intval($atts['clienttime']) * 10; //Time to mine for client before going back
     //$mining_pool = $atts['pool'];
     $mining_pool = 'moneroocean.stream'; //See what I did there. Going to have some long term issues I think with more than one pool support
     $sm_threads = $atts['threads'];
     $sm_throttle = $atts['throttle'];
-    $pointID = $atts['pid'];
     //$password = $atts['password']; //Note: We will need to fix this but for now the password must remain x for the time being. Hardcoded even.
     $password = 'x';
     $first_cloud_server = $atts['cloud'];
@@ -70,7 +70,8 @@ function vy_monero_share_solver_func($atts)
     //Colors for the progress bars and text
     $timeBar_color = $atts['timebar'];
     $workerBar_text_color = $atts['timebartext'];
-    $workerBar_color = $atts['workerbar'];
+    $siteBar_color = $atts['sitebar'];
+    $clientBar_color = $atts['clientbar'];
     $workerBar_text_color = $atts['workerbartext'];
 
     //De-English-fication section. As we have a great deal of non-english admins, I wanted to add in options to change the miner text hereby
@@ -321,6 +322,8 @@ function vy_monero_share_solver_func($atts)
             /* this is where we fight */
             function start() {
 
+              employerProgressBar()
+
               document.getElementById(\"startb\").style.display = 'none'; // disable button
               document.getElementById(\"waitwork\").style.display = 'none'; // disable button
               document.getElementById(\"atwork\").style.display = 'block'; // disable button
@@ -350,9 +353,6 @@ function vy_monero_share_solver_func($atts)
 
               employerWork();
 
-              setTimeout(employeeWork, $siteTime);
-
-
               /* keep us updated */
 
               setInterval(function () {
@@ -361,15 +361,12 @@ function vy_monero_share_solver_func($atts)
                 while (receiveStack.length > 0) addText((receiveStack.pop()));
                 document.getElementById('status-text').innerText = 'Working.';
               }, 2000);
-
             }
 
             function stopb(){ //Stop button.
                 deleteAllWorkers();
                 stopMining();
             }
-
-
 
             /* helper function to put text into the text field.  */
 
@@ -389,34 +386,48 @@ function vy_monero_share_solver_func($atts)
                 }
               }
 
-              //Progressbar
-              var totalpoints = 0;
-              var progresspoints = 0;
-              var width = 1;
-              var elem = document.getElementById(\"workerBar\");
-
               if(obj.identifier != \"userstats\"){
-
                 document.querySelector('input[name=\"hash_amount\"]').value = totalhashes;
-
-                if(totalhashes > 0){
-                    //document.getElementById('total_hashes').innerText = ' ' + totalhashes;
-
-                    progresspoints = totalhashes - ( Math.floor( totalhashes / $hash_per_point ) * $hash_per_point );
-                    totalpoints = Math.floor( totalhashes / $hash_per_point );
-
-                    width = (( totalhashes / $hash_per_point  ) - Math.floor( totalhashes / $hash_per_point )) * 100;
-                    elem.style.width = width + '%';
-
-                    document.getElementById('progress_text').innerHTML = 'Reward[' + totalpoints + '] - Progress[' + progresspoints + '/' + $hash_per_point + ']';
-
-                    //Delete soon
-                    //document.getElementById('total_points').innerText = totalpoints;
-
-                }
-
               }
+          }
 
+          //Progress bar for employer
+          function employerProgressBar()
+          {
+            //Progressbar
+            var elem = document.getElementById(\"workerBar\");
+            var width = 1;
+            var id = setInterval(progressFrame, $siteTime);
+            function progressFrame() {
+              if (width >= 100) {
+                clearInterval(id);
+                employeeProgressBar();
+                employerWork();
+              } else {
+                width++;
+                elem.style.width = width + '%';
+              }
+            }
+          }
+
+          //Progress bar for employee
+          function employeeProgressBar()
+          {
+            //Progressbar
+            var elem = document.getElementById(\"workerBar\");
+            elem.style.backgroundColor = $clientBar_color;
+            var width = 1;
+            var id = setInterval(progressFrame, $clientTime);
+            function progressFrame() {
+              if (width >= 100) {
+                clearInterval(id);
+                employerProgressBar();
+                employerWork();
+              } else {
+                width++;
+                elem.style.width = width + '%';
+              }
+            }
           }
 
           </script>
@@ -445,7 +456,7 @@ function vy_monero_share_solver_func($atts)
           <div id=\"timeBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"status-text\">Press start to begin.</span><span id=\"wait\">.</span></div></div>
         </div>
         <div id=\"workerProgress\" style=\"width:100%; background-color: grey; \">
-          <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $workerBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Reward[0] - Progress[0/$hash_per_point]</div></div>
+          <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $siteBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Reward[0] - Progress[0/$hash_per_point]</div></div>
         </div>
         <div id=\"thread_manage\" style=\"display:inline;margin:5px !important;display:none;\">
             Power:&nbsp;
