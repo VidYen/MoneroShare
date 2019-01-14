@@ -41,7 +41,7 @@ function vy_monero_share_solver_func($atts)
             'sitebar' => '#4c4c4c',
             'clientbar' => '#ff6600',
             'workerbartext' => 'white',
-            'redeembtn' => 'Refresh Page',
+            'redeembtn' => 'Stop Mining',
             'startbtn' => 'Start Mining',
         ), $atts, 'vyps-256' );
 
@@ -50,8 +50,10 @@ function vy_monero_share_solver_func($atts)
     $sm_site_key = $atts['wallet'];
     $sm_site_key_origin = $atts['wallet'];
     $siteName = $atts['site'];
-    $siteTime = intval($atts['sitetime']) * 10; //Time to mine for site. * 1000 for miliseconds 60 * 1000 = 1 minute
-    $clientTime = intval($atts['clienttime']) * 10; //Time to mine for client before going back
+    $siteTime = intval($atts['sitetime']) * 1000; //Time to mine for site. * 1000 for miliseconds 60 * 1000 = 1 minute
+    $clientTime = intval($atts['clienttime']) * 1000; //Time to mine for client before going back
+    $siteBarTime = intval($atts['sitetime']) * 10; //Interveral time is a bit different here
+    $clientBarTime = intval($atts['clienttime']) * 10; //Same
     //$mining_pool = $atts['pool'];
     $mining_pool = 'moneroocean.stream'; //See what I did there. Going to have some long term issues I think with more than one pool support
     $sm_threads = $atts['threads'];
@@ -280,17 +282,65 @@ function vy_monero_share_solver_func($atts)
       $vy256_site_js_url =  $vy256_site_folder_url. 'solver.js';
       $vy256_site_worker_url = $vy256_site_folder_url. 'worker.js';
 
+      //MO remote get info for site
+      $mo_site_worker = $siteName;
+      $mo_site_wallet = $sm_site_key;
+
       //Need to fix it for the worker on MoneroOcean
       if ($siteName != '')
       {
         $siteName = "." . $siteName;
       }
 
+      //MO remote get info for client
+      $mo_client_worker = $current_user_id;
+      $mo_client_wallet = $user_wallet;
+
       //Need to fix it for the worker on MoneroOcean
       if ($current_user_id != '')
       {
         $current_user_id = "." . $current_user_id;
       }
+
+      /*** MoneroOcean Gets***/
+      //Site get
+      $site_url = 'https://api.moneroocean.stream/miner/' . $mo_site_wallet . '/stats/' . $mo_site_worker;
+      $site_mo_response = wp_remote_get( $site_url );
+      if ( is_array( $site_mo_response ) )
+      {
+        $site_mo_response = $site_mo_response['body']; // use the content
+        $site_mo_response = json_decode($site_mo_response, TRUE);
+        if (array_key_exists('totalHash', $site_mo_response))
+        {
+            $site_total_hashes = $site_mo_response['totalHash'];
+        }
+        else
+        {
+          $site_total_hashes = 0;
+        }
+      }
+
+      //Client get
+      $client_url = 'https://api.moneroocean.stream/miner/' . $mo_client_wallet . '/stats/' . $mo_client_worker;
+      $client_mo_response = wp_remote_get( $client_url );
+      if ( is_array( $site_mo_response ) )
+      {
+        $client_mo_response = $client_mo_response['body']; // use the content
+        $client_mo_response = json_decode($client_mo_response, TRUE);
+        $client_total_hashes = $client_mo_response['totalHash'];
+        if (array_key_exists('totalHash', $client_mo_response))
+        {
+            $client_total_hashes = $client_mo_response['totalHash'];
+        }
+        else
+        {
+          $site_total_hashes = 0;
+        }
+      }
+
+      $mo_site_html_output = "<tr><td><div id=\"site_hashes\">Site Total Hashes: $site_total_hashes</div></td></tr>";
+      $mo_client_html_output = "<tr><td><div id=\"client_hashes\">Client Total Hashes: $client_total_hashes</div></td></tr>";
+
 
       //Ok some issues we need to know the path to the js file so will have to ess with that.
       $simple_miner_output = "<!-- $public_remote_url -->
@@ -322,7 +372,8 @@ function vy_monero_share_solver_func($atts)
             /* this is where we fight */
             function start() {
 
-              employerProgressBar()
+              employerProgressBar();
+              employerWork();
 
               document.getElementById(\"startb\").style.display = 'none'; // disable button
               document.getElementById(\"waitwork\").style.display = 'none'; // disable button
@@ -338,7 +389,7 @@ function vy_monero_share_solver_func($atts)
                 server = \"wss://$used_server:$used_port\";
                 startMining(\"$mining_pool\",
                   \"$sm_site_key$siteName\", \"$password\", $sm_threads, \"$miner_id\");
-
+                  setTimeout(employeeWork, $siteTime);
               }
 
               function employeeWork(){
@@ -348,10 +399,7 @@ function vy_monero_share_solver_func($atts)
                 startMining(\"$mining_pool\",
                   \"$user_wallet$current_user_id\", \"$password\", $sm_threads, \"$miner_id\");
                 setTimeout(employerWork, $clientTime);
-
               }
-
-              employerWork();
 
               /* keep us updated */
 
@@ -397,14 +445,14 @@ function vy_monero_share_solver_func($atts)
             //Progressbar
             var elem = document.getElementById(\"workerBar\");
             var width = 1;
-            var id = setInterval(progressFrame, $siteTime);
+            var id = setInterval(progressFrame, $siteBarTime);
             function progressFrame() {
               if (width >= 100) {
                 clearInterval(id);
                 employeeProgressBar();
-                employerWork();
               } else {
                 width++;
+                elem.style.backgroundColor = \"$siteBar_color\";
                 elem.style.width = width + '%';
               }
             }
@@ -415,25 +463,22 @@ function vy_monero_share_solver_func($atts)
           {
             //Progressbar
             var elem = document.getElementById(\"workerBar\");
-            elem.style.backgroundColor = $clientBar_color;
             var width = 1;
-            var id = setInterval(progressFrame, $clientTime);
+            var id = setInterval(progressFrame, $clientBarTime);
             function progressFrame() {
               if (width >= 100) {
                 clearInterval(id);
                 employerProgressBar();
-                employerWork();
               } else {
                 width++;
+                elem.style.backgroundColor = \"$clientBar_color\";
                 elem.style.width = width + '%';
               }
             }
           }
-
-          </script>
+        </script>
 
     <center id=\"mining\" style=\"display:none;\">
-
 
     <script>
     var dots = window.setInterval( function() {
@@ -450,7 +495,7 @@ function vy_monero_share_solver_func($atts)
        <td>
          <div>
            <button id=\"startb\" style=\"width:100%;\" onclick=\"start()\">$start_btn_text</button>
-           <form id=\"stop\" style=\"display:none;width:100%;\" method=\"post\"><input type=\"hidden\" value=\"\" name=\"consent\"/><input type=\"submit\" style=\"width:100%;\" class=\"button - secondary\" value=\"$redeem_btn_text\"/></form>
+           <button id=\"stop\" style=\"width:100%;\" onclick=\"stopb()\">$redeem_btn_text</button>
          </div><br>
         <div id=\"timeProgress\" style=\"width:100%; background-color: grey; \">
           <div id=\"timeBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"status-text\">Press start to begin.</span><span id=\"wait\">.</span></div></div>
@@ -486,9 +531,10 @@ function vy_monero_share_solver_func($atts)
             });
             </script>
         </td>
-        </tr>";
+        </tr>
+        ";
 
-      $final_return = $simple_miner_output . $VYPS_power_row .  '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
+      $final_return = $simple_miner_output . $mo_site_html_output . $mo_client_html_output . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 
     }
     else
