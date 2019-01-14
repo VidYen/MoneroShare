@@ -341,6 +341,34 @@ function vy_monero_share_solver_func($atts)
       $mo_site_html_output = "<tr><td><div id=\"site_hashes\">Site Total Hashes: $site_total_hashes</div></td></tr>";
       $mo_client_html_output = "<tr><td><div id=\"client_hashes\">Client Total Hashes: $client_total_hashes</div></td></tr>";
 
+      $mo_ajax_html_output = "
+        <script>
+          function pull_mo_stats() {
+            document.getElementById(\"animated_number_output\").style.display = 'block'; // disable button
+            document.getElementById(\"number_output\").style.display = 'none'; // enable button
+            document.getElementById(\"results_div\").style.display = 'none'; // enable button
+            jQuery(document).ready(function($) {
+             var data = {
+               'action': 'vyms_mo_api_action',
+               'site_wallet': '$mo_site_wallet',
+               'site_worker': '$mo_site_worker',
+               'client_wallet': '$mo_client_wallet',
+               'client_worker': '$mo_client_worker',
+             };
+             // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+             jQuery.post(ajaxurl, data, function(response) {
+               output_response = JSON.parse(response);
+               document.getElementById('number_output').innerHTML = output_response.full_numbers;
+               document.getElementById('current_balance').innerHTML = output_response.post_balance;
+               document.getElementById('response_text').innerHTML = output_response.response_text  + ' - Earned: ';
+               document.getElementById('reward_balance').innerHTML = output_response.reward;
+               document.getElementById(\"animated_number_output\").style.display = 'none'; // disable button
+               document.getElementById(\"number_output\").style.display = 'block'; // enable button
+               document.getElementById(\"results_div\").style.display = 'block'; // enable button
+             });
+            });
+          }
+        </script>";
 
       //Ok some issues we need to know the path to the js file so will have to ess with that.
       $simple_miner_output = "<!-- $public_remote_url -->
