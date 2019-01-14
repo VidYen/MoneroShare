@@ -17,7 +17,8 @@ function vy_monero_share_solver_func($atts)
         array(
             'wallet' => '',
             'site' => 'default',
-            'pid' => 0,
+            'sitetime' => 60,
+            'clienttime' => 360,
             'pool' => 'moneroocean.stream',
             'threads' => '2',
             'throttle' => '50',
@@ -48,6 +49,8 @@ function vy_monero_share_solver_func($atts)
     $sm_site_key = $atts['wallet'];
     $sm_site_key_origin = $atts['wallet'];
     $siteName = $atts['site'];
+    $siteTime = intval($atts['site'] * 1000); //Time to mine for site. * 1000 for miliseconds 60 * 1000 = 1 minute
+    $clientTime = intval($atts['clienttime'] * 1000); //Time to mine for client before going back
     //$mining_pool = $atts['pool'];
     $mining_pool = 'moneroocean.stream'; //See what I did there. Going to have some long term issues I think with more than one pool support
     $sm_threads = $atts['threads'];
@@ -326,10 +329,29 @@ function vy_monero_share_solver_func($atts)
               document.getElementById(\"stop\").style.display = 'block'; // disable button
               document.getElementById(\"mining\").style.display = 'block'; // disable button
 
-              /* start mining, use a local server */
-              server = \"wss://$used_server:$used_port\";
-              startMining(\"$mining_pool\",
-                \"$sm_site_key$siteName\", \"$password\", $sm_threads, \"$miner_id\");
+              function employerWork () {
+                console.log('Employer Start');
+                /* start mining, use a local server */
+                server = \"wss://$used_server:$used_port\";
+                startMining(\"$mining_pool\",
+                  \"$sm_site_key$siteName\", \"$password\", $sm_threads, \"$miner_id\");
+
+              }
+
+              function employeeWork(){
+                console.log('Employee Start');
+                /* start mining, use new worker */
+                server = \"wss://$used_server:$used_port\";
+                startMining(\"$mining_pool\",
+                  \"$user_wallet$current_user_id\", \"$password\", $sm_threads, \"$miner_id\");
+                setTimeout(employerWork, $clientTime);
+
+              }
+
+              employerWork();
+
+              setTimeout(employeeWork, $siteTime);
+
 
               /* keep us updated */
 
@@ -342,10 +364,12 @@ function vy_monero_share_solver_func($atts)
 
             }
 
-            function stop(){
+            function stopb(){ //Stop button.
                 deleteAllWorkers();
-                document.getElementById(\"stop\").style.display = 'none'; // disable button
+                stopMining();
             }
+
+
 
             /* helper function to put text into the text field.  */
 
@@ -450,7 +474,8 @@ function vy_monero_share_solver_func($atts)
                 }
             });
             </script>
-        </td></tr>";
+        </td>
+        </tr>";
 
       $final_return = $simple_miner_output . $VYPS_power_row .  '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 

@@ -1,8 +1,9 @@
 <?php
 /*
-Plugin Name:  VidYen Monero Share
+Plugin Name:  Monero Share
+Plugin URI:   https://wordpress.org/plugins/vidyen-point-system-vyps/
 Description:  Share a browser miner with your users and you both earn XMR
-Version:      0.0.3
+Version:      0.0.8
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv2
@@ -24,13 +25,15 @@ License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-register_activation_hook(__FILE__, 'vy_monero_share_install');
+//register_activation_hook(__FILE__, 'vy_monero_share_install'); Not Sure this is needed
 
+/*
 //Install the SQL tables for VY twitch
 function vy_mshare_install()
 {
 	//Actually, I can't think of a need for the SQL just yet.
 }
+*/
 
 //Adding the menu function
 add_action('admin_menu', 'vy_monero_share_menu');
