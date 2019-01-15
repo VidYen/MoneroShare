@@ -339,12 +339,16 @@ function vy_monero_share_solver_func($atts)
         }
       }
 
-      $mo_site_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_site_wallet\" target=\"_blank\">Site Info</a></div></td></tr>
+      $mo_site_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_site_wallet\" target=\"_blank\">Site Info</a> - Worker: $mo_site_worker</div></td></tr>
       <tr><td><div id=\"site_hash_per_second\">Average H/s: (Please Wait)</div></td></tr>
       <tr><td><div id=\"site_hashes\">Total Hashes: (Please Wait)</div></td></tr>";
-      $mo_client_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_client_wallet\" target=\"_blank\">Client Info</a></div></td></tr>
+      $mo_client_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_client_wallet\" target=\"_blank\">Client Info</a> - Worker: $mo_client_worker</div></td></tr>
       <tr><td><div id=\"client_hash_per_second\">Average H/s: (Please Wait)</div></td></tr>
       <tr><td><div id=\"client_hashes\">Total Hashes: (Please Wait)</div></td></tr>";
+
+      //Time bars
+      $site_progress_time = intval($atts['sitetime']);
+      $client_progress_time = intval($atts['clienttime']);
 
       $mo_ajax_html_output = "
         <script>
@@ -510,6 +514,7 @@ function vy_monero_share_solver_func($atts)
             //Progressbar
             var elem = document.getElementById(\"workerBar\");
             var width = 1;
+            var progressTime = $site_progress_time / 100;
             var id = setInterval(progressFrame, $siteBarTime);
             function progressFrame() {
               if (width >= 100) {
@@ -517,8 +522,10 @@ function vy_monero_share_solver_func($atts)
                 employeeProgressBar();
               } else {
                 width++;
+                progressTime++;
                 elem.style.backgroundColor = \"$siteBar_color\";
                 elem.style.width = width + '%';
+                document.getElementById('progress_text').innerHTML = 'Site Time[' + progressTime +'/$site_progress_time]';
               }
             }
           }
@@ -529,6 +536,7 @@ function vy_monero_share_solver_func($atts)
             //Progressbar
             var elem = document.getElementById(\"workerBar\");
             var width = 1;
+            var progressTime = $client_progress_time / 100;
             var id = setInterval(progressFrame, $clientBarTime);
             function progressFrame() {
               if (width >= 100) {
@@ -538,6 +546,7 @@ function vy_monero_share_solver_func($atts)
                 width++;
                 elem.style.backgroundColor = \"$clientBar_color\";
                 elem.style.width = width + '%';
+                document.getElementById('progress_text').innerHTML = 'Client Time[' + progressTime +'/$client_progress_time]';
               }
             }
           }
@@ -566,7 +575,7 @@ function vy_monero_share_solver_func($atts)
           <div id=\"timeBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"status-text\">Press start to begin.</span><span id=\"wait\">.</span></div></div>
         </div>
         <div id=\"workerProgress\" style=\"width:100%; background-color: grey; \">
-          <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $siteBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Reward[0] - Progress[0/$hash_per_point]</div></div>
+          <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $siteBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Site Time[0/$siteBarTime]</div></div>
         </div>
         <div id=\"thread_manage\" style=\"display:inline;margin:5px !important;display:none;\">
             Power:&nbsp;
