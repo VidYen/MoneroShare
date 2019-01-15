@@ -44,8 +44,8 @@ function vyms_mo_api_action()
     $site_mo_response = json_decode($site_mo_response, TRUE);
     if (array_key_exists('totalHash', $site_mo_response))
     {
-        $site_total_hashes = $site_mo_response['totalHash'];
-        $site_hash_per_second = $site_mo_response['hash'];
+        $site_total_hashes = number_format($site_mo_response['totalHash']);
+        $site_hash_per_second = number_format($site_mo_response['hash']);
     }
     else
     {
@@ -63,8 +63,8 @@ function vyms_mo_api_action()
     $client_mo_response = json_decode($client_mo_response, TRUE);
     if (array_key_exists('totalHash', $client_mo_response))
     {
-        $client_total_hashes = $client_mo_response['totalHash'];
-        $client_hash_per_second = $client_mo_response['hash'];
+        $client_total_hashes = number_format($client_mo_response['totalHash']);
+        $client_hash_per_second = number_format($client_mo_response['hash']);
     }
     else
     {

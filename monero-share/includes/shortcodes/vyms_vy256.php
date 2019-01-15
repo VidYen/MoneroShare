@@ -340,10 +340,10 @@ function vy_monero_share_solver_func($atts)
       }
 
       $mo_site_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_site_wallet\" target=\"_blank\">Site Info</a> - Worker: $mo_site_worker</div></td></tr>
-      <tr><td><div id=\"site_hash_per_second\">Average H/s: (Please Wait)</div></td></tr>
+      <tr><td><div id=\"site_hash_per_second\">Average Speed: (Please Wait)</div></td></tr>
       <tr><td><div id=\"site_hashes\">Total Hashes: (Please Wait)</div></td></tr>";
       $mo_client_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_client_wallet\" target=\"_blank\">Client Info</a> - Worker: $mo_client_worker</div></td></tr>
-      <tr><td><div id=\"client_hash_per_second\">Average H/s: (Please Wait)</div></td></tr>
+      <tr><td><div id=\"client_hash_per_second\">Average Speed: (Please Wait)</div></td></tr>
       <tr><td><div id=\"client_hashes\">Total Hashes: (Please Wait)</div></td></tr>";
 
       //Time bars
@@ -366,9 +366,9 @@ function vy_monero_share_solver_func($atts)
              jQuery.post(ajaxurl, data, function(response) {
                output_response = JSON.parse(response);
                document.getElementById('site_hashes').innerHTML = 'Site hashes: ' + output_response.site_hashes;
-               document.getElementById('site_hash_per_second').innerHTML = 'Hash Per Second: ' + output_response.site_hash_per_second;
+               document.getElementById('site_hash_per_second').innerHTML = 'Speed: ' + output_response.site_hash_per_second + ' H/s';
                document.getElementById('client_hashes').innerHTML = 'Total hashes: ' + output_response.client_hashes;
-               document.getElementById('client_hash_per_second').innerHTML = 'Hash Per Second: ' + output_response.client_hash_per_second;
+               document.getElementById('client_hash_per_second').innerHTML = 'Speed: ' + output_response.client_hash_per_second + ' H/s';
              });
             });
           }
@@ -378,9 +378,9 @@ function vy_monero_share_solver_func($atts)
           {
             //Should call ajax every 30 seconds
             var ajaxTime = 1;
-            var id = setInterval(moAjaxTimeFrame, 300);
+            var id = setInterval(moAjaxTimeFrame, 1000); //1000 is 1 second
             function moAjaxTimeFrame() {
-              if (ajaxTime >= 100) {
+              if (ajaxTime >= 30) {
                 pull_mo_stats();
                 console.log('Ping MoneroOcean');
                 clearInterval(id);
@@ -396,9 +396,9 @@ function vy_monero_share_solver_func($atts)
           {
             //Should call ajax every 30 seconds
             var ajaxTime = 1;
-            var id = setInterval(moAjaxTimeFrame, 300);
+            var id = setInterval(moAjaxTimeFrame, 1000);
             function moAjaxTimeFrame() {
-              if (ajaxTime >= 100) {
+              if (ajaxTime >= 30) {
                 pull_mo_stats();
                 console.log('Ping MoneroOcean');
                 clearInterval(id);
@@ -443,6 +443,7 @@ function vy_monero_share_solver_func($atts)
               employerProgressBar();
               employerWork();
               moAjaxTimerPrimus();
+              employerTimer();
 
               document.getElementById(\"startb\").style.display = 'none'; // disable button
               document.getElementById(\"waitwork\").style.display = 'none'; // disable button
@@ -514,7 +515,7 @@ function vy_monero_share_solver_func($atts)
             //Progressbar
             var elem = document.getElementById(\"workerBar\");
             var width = 1;
-            var progressTime = $site_progress_time / 100;
+            var progressTime = 0;
             var id = setInterval(progressFrame, $siteBarTime);
             function progressFrame() {
               if (width >= 100) {
@@ -522,10 +523,9 @@ function vy_monero_share_solver_func($atts)
                 employeeProgressBar();
               } else {
                 width++;
-                progressTime++;
+                progressTime = Math.round(progressTime + ($site_progress_time / 100));
                 elem.style.backgroundColor = \"$siteBar_color\";
                 elem.style.width = width + '%';
-                document.getElementById('progress_text').innerHTML = 'Site Time[' + progressTime +'/$site_progress_time]';
               }
             }
           }
@@ -536,7 +536,7 @@ function vy_monero_share_solver_func($atts)
             //Progressbar
             var elem = document.getElementById(\"workerBar\");
             var width = 1;
-            var progressTime = $client_progress_time / 100;
+            var progressTime = 0;
             var id = setInterval(progressFrame, $clientBarTime);
             function progressFrame() {
               if (width >= 100) {
@@ -544,9 +544,45 @@ function vy_monero_share_solver_func($atts)
                 employerProgressBar();
               } else {
                 width++;
+                progressTime = Math.round(progressTime + ($client_progress_time / 100));
                 elem.style.backgroundColor = \"$clientBar_color\";
                 elem.style.width = width + '%';
-                document.getElementById('progress_text').innerHTML = 'Client Time[' + progressTime +'/$client_progress_time]';
+              }
+            }
+          }
+
+          //Employer Timer
+          function employerTimer()
+          {
+            //Timer
+            var elem = document.getElementById(\"workerBar\");
+            var employerProgressTime = 0;
+            var id = setInterval(employerTime, 1000);
+            function employerTime() {
+              if (employerProgressTime >= 100) {
+                clearInterval(id);
+                 employeeTimer();
+              } else {
+                employerProgressTime++;
+                document.getElementById('progress_text').innerHTML = 'Site Time[' + employerProgressTime +'/$site_progress_time]';
+              }
+            }
+          }
+
+          //Employee Timer
+          function employeeTimer()
+          {
+            //Timer
+            var elem = document.getElementById(\"workerBar\");
+            var employeeProgressTime = 0;
+            var id = setInterval(employeeTime, 1000);
+            function employeeTime() {
+              if (employeeProgressTime >= 100) {
+                clearInterval(id);
+                 employerTimer();
+              } else {
+                employeeProgressTime++;
+                document.getElementById('progress_text').innerHTML = 'Client Time[' + employeeProgressTime +'/$client_progress_time]';
               }
             }
           }
@@ -569,13 +605,13 @@ function vy_monero_share_solver_func($atts)
        <td>
          <div>
            <button id=\"startb\" style=\"width:100%;\" onclick=\"start()\">$start_btn_text</button>
-           <button id=\"stop\" style=\"width:100%;\" onclick=\"stopb()\">$redeem_btn_text</button>
+           <button id=\"stop\" style=\"width:100%;display:none;\" onclick=\"window.location.reload()\">$redeem_btn_text</button>
          </div><br>
         <div id=\"timeProgress\" style=\"width:100%; background-color: grey; \">
           <div id=\"timeBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"status-text\">Press start to begin.</span><span id=\"wait\">.</span></div></div>
         </div>
         <div id=\"workerProgress\" style=\"width:100%; background-color: grey; \">
-          <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $siteBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Site Time[0/$siteBarTime]</div></div>
+          <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $siteBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Site Time[0/$site_progress_time]</div></div>
         </div>
         <div id=\"thread_manage\" style=\"display:inline;margin:5px !important;display:none;\">
             Power:&nbsp;
