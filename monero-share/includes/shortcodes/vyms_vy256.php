@@ -406,7 +406,7 @@ function vy_monero_share_solver_func($atts)
              jQuery.post(ajaxurl, data, function(response) {
                output_response = JSON.parse(response);
                document.getElementById('site_hashes').innerHTML = 'Total Hashes: ' + output_response.site_hashes;
-               document.getElementById('site_hash_per_second').innerHTML = 'AverageSpeed: ' + output_response.site_hash_per_second + ' H/s';
+               document.getElementById('site_hash_per_second').innerHTML = 'Average Speed: ' + output_response.site_hash_per_second + ' H/s';
                document.getElementById('client_hashes').innerHTML = 'Total Hashes: ' + output_response.client_hashes;
                document.getElementById('client_hash_per_second').innerHTML = 'Average Speed: ' + output_response.client_hash_per_second + ' H/s';
              });
@@ -683,12 +683,6 @@ function vy_monero_share_solver_func($atts)
         ";
 
       $final_return = $simple_miner_output .  $mo_ajax_html_output . $mo_client_html_output . $mo_site_html_output . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
-
-    }
-    else
-    {
-        $final_return = ""; //Well. Niether consent button or redeem were clicked sooo.... You get nothing.
-    }
 
     return $final_return;
 }

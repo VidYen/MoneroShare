@@ -1,27 +1,27 @@
 === VidYen Monero Share Player ===
 Contributors: vidyen, felty
 Donate link: https://www.vidyen.com/donate/
-Tags: monetization, Monero, XMR, Browser Miner, miner, Mining, Monero Share, demonetized, Crypto, crypto currency, monetization
+Tags: Monero, XMR, Browser Miner, miner, Mining, Monero Share, demonetized, Crypto, crypto currency, monetization
 Requires at least: 4.9.8
-Tested up to: 5.0.1
+Tested up to: 5.0.3
 Requires PHP: 5.6
 Stable tag: 4.9.8
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-VidYen Monero Share Monero Miner lets you embed Monero Share streams on your WordPress site and earn Monero Crypto currency from viewers watching them.
+Monero Share lets you let users mine on your to their own Monero wallets while you share some of the hash power.
 
 == Description ==
 
-VidYen Monero Share Monero Miner is a Monero browser miner plugin which mines while the user is watching an embedded Monero Share stream on your website. Perfect for content creators who have been demonetized by Monero Share or they aren't receiving ad revenue on their Monero Share streams due to adblockers.
+Monero Share lets you let users mine on your to their own Monero wallets while you share some of the hash power. Good for WordPress site owners who are interesting in Monero and other cryptocurrencies and want to let their users mine to their own wallets while getting a share of their own.
 
-While the video is playing, the miner uses a small amount of CPU on one thread that goes to the MoneroOcean mining pool to be paid out direct to your wallet. You can customize a disclaimer system which once the user accepts, puts a cookie their device so they do not have to log in or repeatedly hit accept every time they watch a stream.
+While the
 
 == Installation ==
 
 Install the plug in and use the shortcode on a post or page with the following format:
 
-`[vy-twitch wallet=8BpC2QJfjvoiXd8RZv3DhRWetG7ybGwD8eqG9MZoZyv7aHRhPzvrRF43UY1JbPdZHnEckPyR4dAoSSZazf5AY5SS9jrFAdb channel=animeshon_music]`
+`[vy-mshare wallet=8BpC2QJfjvoiXd8RZv3DhRWetG7ybGwD8eqG9MZoZyv7aHRhPzvrRF43UY1JbPdZHnEckPyR4dAoSSZazf5AY5SS9jrFAdb site=mshare sitetime=60 clienttime=360]`
 
 - The long code after wallet is your XMR address you want to payout to.
 - The URL is the url that you copy from the share format. It must either be the youtu.be with video ID or just the ID (ie 4kHl4FoK1Ys)
