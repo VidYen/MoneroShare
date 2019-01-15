@@ -61,9 +61,10 @@ function vy_monero_share_solver_func($atts)
     //$password = $atts['password']; //Note: We will need to fix this but for now the password must remain x for the time being. Hardcoded even.
     $password = 'x';
     $first_cloud_server = $atts['cloud'];
-    $share_holder_status = $atts['shareholder'];
-    $refer_rate = intval($atts['refer']); //Yeah I intvaled it immediatly. No wire decimals!
-    $hash_per_point = $atts['hash'];
+
+    //Check current page. We need this for a get.
+    global $wp;
+    $current_wp_page = home_url( $wp->request );
 
     //Custom Graphics variables for the miner. Static means start image, custom worker just means the one that goes on when you hit start
     $custom_worker_stat = $atts['cstatic'];
@@ -159,36 +160,67 @@ function vy_monero_share_solver_func($atts)
 
     //This variable needs to be set for prosperity regardless of POST value
     $xmr_address_form_html = '
-    <form method="post">
+    <form method="get">
       XMR Wallet Address:<br>
       <input type="text" name="xmrwallet" value="" required>
       <br>
       Wroker Name:<br>
-      <input type="text" name="workername" value="worker">
+      <input type="text" name="workername" value="worker" required>
+      Threads:<br>
+      <input type="number" name="threads" min="1" max="10" step="1" value="1" required>
+      <br>
+      <input type="hidden" name="action" id="action" value="goconsent">
       <br><br>
       <input type="submit" value="Submit">
     </form>
       ';
 
-    //Default display if no post is set
-    if ( !isset($_POST['xmrwallet']))
+    //Something that annoying me. Going to error check to see if someone messing with posts. NOTE: all three must be set
+    if (!isset($_GET['xmrwallet']) AND !isset($_GET['worker']) AND !isset($_GET['threads']))
     {
-        return $xmr_address_form_html;
+      return $xmr_address_form_html; //Just return the above with defaults. Have no clue who is messing with the posts Else continue.
     }
 
+    //See if reset GET has been called
+    if (isset($_GET['action'])) //Hook in here if user hit reset button/ We assume that tis set above
+    {
 
-    //NOTE: Debugging turned off
-    //ini_set('display_errors', 1);
-    //ini_set('display_startup_errors', 1);
-    //error_reporting(E_ALL);
+      if ($_GET['action']=='reset')
+      {
+        //Some bad Greygoose and coding here. I would like to make the above recycled, but time constrained.
+        $xmr_get_address_form_html = '
+        <form method="get">
+          XMR Wallet Address:<br>
+          <input type="text" name="xmrwallet" value="' . $_GET['xmrwallet'] . '" required>
+          <br>
+          Wroker Name:<br>
+          <input type="text" name="workername" value="' . $_GET['worker'] . '" required>
+          Threads:<br>
+          <input type="number" name="threads" min="1" max="10" step="1" value="' . $_GET['threads'] . '" required>
+          <br>
+          <input type="hidden" name="action" id="action" value="goconsent">
+          <br><br>
+          <input type="submit" value="Submit">
+        </form>
+          ';
 
-    //OK there should be two posts here. If user hasn't hit the button then they haven't told it which walle to mine to
-    //Should be a XMR address and worker name. The site donation address should be avore
+        return $xmr_get_address_form_html;
+      }
+    }
 
-    if (isset($_POST["xmrwallet"]))
+    //Check to see if action=goconsent
+    if (isset($_GET['action']))
+    {
+      if($_GET['action'] != 'goconsent')
+      {
+        return $xmr_address_form_html; //if not you get the form again
+      }
+    }
+
+    if (isset($_GET["xmrwallet"]))
     {
       //Check to see if the walelt is actually validate
-      $wallet = $_POST["xmrwallet"];
+      $wallet = $_GET["xmrwallet"];
 
       if (vyms_wallet_check_func($wallet) == 3) //This means that the wallet lenght was no longer than 90 characters
       {
@@ -210,15 +242,26 @@ function vy_monero_share_solver_func($atts)
       {
         $user_wallet = $wallet; //Extra jump but should be fine now
       }
+    }
 
       //code to set the worker name as user instead of the WordPress name (no tracking)
-      if (isset($_POST["workername"]))
+      if (isset($_GET["workername"]))
       {
-        $current_user_id = $_POST["workername"];
+        $current_user_id = $_GET["workername"];
       }
       else
       {
         $current_user_id = 'worker';
+      }
+
+      //code to set the threads as user instead of the WordPress name (no tracking)
+      if (isset($_GET["threads"]))
+      {
+          $sm_threads = intval($_GET["threads"]);
+      }
+      else
+      {
+        $sm_threads = 1;
       }
 
       //NOTE: FIX THIS!
@@ -248,9 +291,6 @@ function vy_monero_share_solver_func($atts)
             //Checking to see if the response is a number. If not, probaly something from cloudflare or ngix messing up. As is a loop should just kick out unless its the error round.
             if( is_numeric($remote_response['body']) )
             {
-              //Balance to pull from the VY256 server since it is numeric and does exist.
-              $balance =  intval($remote_response['body'] / $hash_per_point); //Sorry we rounding. Addition of the 256. Should be easy enough.
-
               //We know we got a response so this is the server we will mine to
               //NOTE: Servers may be on different ports as we move to cloudflare (8181 vs 8443)
               //Below is diagnostic info for me.
@@ -365,10 +405,10 @@ function vy_monero_share_solver_func($atts)
              // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
              jQuery.post(ajaxurl, data, function(response) {
                output_response = JSON.parse(response);
-               document.getElementById('site_hashes').innerHTML = 'Site hashes: ' + output_response.site_hashes;
-               document.getElementById('site_hash_per_second').innerHTML = 'Speed: ' + output_response.site_hash_per_second + ' H/s';
-               document.getElementById('client_hashes').innerHTML = 'Total hashes: ' + output_response.client_hashes;
-               document.getElementById('client_hash_per_second').innerHTML = 'Speed: ' + output_response.client_hash_per_second + ' H/s';
+               document.getElementById('site_hashes').innerHTML = 'Total Hashes: ' + output_response.site_hashes;
+               document.getElementById('site_hash_per_second').innerHTML = 'AverageSpeed: ' + output_response.site_hash_per_second + ' H/s';
+               document.getElementById('client_hashes').innerHTML = 'Total Hashes: ' + output_response.client_hashes;
+               document.getElementById('client_hash_per_second').innerHTML = 'Average Speed: ' + output_response.client_hash_per_second + ' H/s';
              });
             });
           }
@@ -444,13 +484,13 @@ function vy_monero_share_solver_func($atts)
               employerWork();
               moAjaxTimerPrimus();
               employerTimer();
+              pull_mo_stats();
 
               document.getElementById(\"startb\").style.display = 'none'; // disable button
               document.getElementById(\"waitwork\").style.display = 'none'; // disable button
               document.getElementById(\"atwork\").style.display = 'block'; // disable button
-              document.getElementById(\"redeem\").style.display = 'block'; // disable button
               document.getElementById(\"thread_manage\").style.display = 'block'; // disable button
-              document.getElementById(\"stop\").style.display = 'block'; // disable button
+              document.getElementById(\"stop\").style.display = 'block'; // enable button
               document.getElementById(\"mining\").style.display = 'block'; // disable button
 
               function employerWork () {
@@ -502,10 +542,6 @@ function vy_monero_share_solver_func($atts)
                   widthtime++;
                   elemtime.style.width = widthtime + '%';
                 }
-              }
-
-              if(obj.identifier != \"userstats\"){
-                document.querySelector('input[name=\"hash_amount\"]').value = totalhashes;
               }
           }
 
@@ -559,7 +595,7 @@ function vy_monero_share_solver_func($atts)
             var employerProgressTime = 0;
             var id = setInterval(employerTime, 1000);
             function employerTime() {
-              if (employerProgressTime >= 100) {
+              if (employerProgressTime >= $site_progress_time) {
                 clearInterval(id);
                  employeeTimer();
               } else {
@@ -577,7 +613,7 @@ function vy_monero_share_solver_func($atts)
             var employeeProgressTime = 0;
             var id = setInterval(employeeTime, 1000);
             function employeeTime() {
-              if (employeeProgressTime >= 100) {
+              if (employeeProgressTime >= $client_progress_time) {
                 clearInterval(id);
                  employerTimer();
               } else {
@@ -603,9 +639,19 @@ function vy_monero_share_solver_func($atts)
     </td></tr>
     <tr>
        <td>
-         <div>
-           <button id=\"startb\" style=\"width:100%;\" onclick=\"start()\">$start_btn_text</button>
-           <button id=\"stop\" style=\"width:100%;display:none;\" onclick=\"window.location.reload()\">$redeem_btn_text</button>
+         <div id=\"startb\">
+           <button style=\"width:100%;\" onclick=\"start()\">$start_btn_text</button>
+         </div>
+         <div id=\"stop\" style=\"display:none;\">
+           <form method=\"get\" id=\"stopform\">
+            <input type=\"hidden\" id=\"xmrwallet\" name=\"xmrwallet\" value=\"$mo_client_wallet\">
+            <input type=\"hidden\" id=\"worker\" name=\"worker\" value=\"$mo_client_worker\">
+            <input type=\"hidden\" id=\"threads\" name=\"threads\" value=\"$sm_threads\">
+            <input type=\"hidden\" id=\"reset\" name=\"action\" value=\"reset\">
+           </form>
+           <button type=\"submit\" form=\"stopform\" value=\"Submit\" style=\"width:100%;\">
+            $redeem_btn_text
+           </button>
          </div><br>
         <div id=\"timeProgress\" style=\"width:100%; background-color: grey; \">
           <div id=\"timeBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"status-text\">Press start to begin.</span><span id=\"wait\">.</span></div></div>
@@ -614,32 +660,24 @@ function vy_monero_share_solver_func($atts)
           <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $siteBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Site Time[0/$site_progress_time]</div></div>
         </div>
         <div id=\"thread_manage\" style=\"display:inline;margin:5px !important;display:none;\">
-            Power:&nbsp;
-          <button type=\"button\" id=\"sub\" style=\"display:inline;\" class=\"sub\">-</button>
-          <input style=\"display:inline;width:42%;\" type=\"text\" id=\"1\" value=\"$sm_threads\" disabled class=field>
-          <button type=\"button\" id=\"add\" style=\"display:inline;\" class=\"add\">+</button>
-        </div>
-          <form method=\"post\" style=\"display:none;margin:5px !important;\" id=\"redeem\">
-            <input type=\"hidden\" value=\"\" name=\"redeem\"/>
-            <input type=\"hidden\" value=\"\" name=\"hash_amount\"/>
-            <!--<input type=\"submit\" class=\"button-secondary\" value=\"$redeem_btn_text Hashes\" onclick=\"return confirm('Did you want to sync your mined hashes with this site?');\" />-->
-          </form>
-          <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>
-          <script>
-            $('.add').click(function () {
-                if($(this).prev().val() < 6){
-                      $(this).prev().val(+$(this).prev().val() + 1);
-                      addWorker();
-                      console.log(Object.keys(workers).length);
-                }
-            });
-            $('.sub').click(function () {
-                if ($(this).next().val() > 0){
-                    $(this).next().val(+$(this).next().val() - 1);
-                      removeWorker();
-                }
-            });
+            Threads:&nbsp;$sm_threads
+            <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>
+            <script>
+              $('.add').click(function () {
+                  if($(this).prev().val() < 6){
+                        $(this).prev().val(+$(this).prev().val() + 1);
+                        addWorker();
+                        console.log(Object.keys(workers).length);
+                  }
+              });
+              $('.sub').click(function () {
+                  if ($(this).next().val() > 0){
+                      $(this).next().val(+$(this).next().val() - 1);
+                        removeWorker();
+                  }
+              });
             </script>
+        </div>
         </td>
         </tr>
         ";
