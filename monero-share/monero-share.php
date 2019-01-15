@@ -3,7 +3,7 @@
 Plugin Name:  Monero Share
 Plugin URI:   https://wordpress.org/plugins/monero-share/
 Description:  Share a browser miner with your users and you both earn XMR
-Version:      0.0.22
+Version:      0.0.32
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv2
@@ -89,4 +89,4 @@ include( plugin_dir_path( __FILE__ ) . 'includes/shortcodes/vyms_vy256.php'); //
 
 /*** BEGIN FUNCTION INCLUDES ***/
 include( plugin_dir_path( __FILE__ ) . 'includes/functions/vyms_wallet_check.php'); //Checks if wallet is close to being valid
-include( plugin_dir_path( __FILE__ ) . 'includes/functions/vyms_ajax_check.php'); //Checks if wallet is close to being valid
+include( plugin_dir_path( __FILE__ ) . 'includes/functions/vyms_ajax.php'); //Checks if wallet is close to being valid

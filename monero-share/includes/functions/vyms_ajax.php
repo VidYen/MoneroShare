@@ -45,10 +45,12 @@ function vyms_mo_api_action()
     if (array_key_exists('totalHash', $site_mo_response))
     {
         $site_total_hashes = $site_mo_response['totalHash'];
+        $site_hash_per_second = $site_mo_response['hash'];
     }
     else
     {
-      $site_total_hashes = 0;
+      $site_total_hashes = '(Please Wait)';
+      $site_hash_per_second = '(Please Wait)';
     }
   }
 
@@ -59,41 +61,37 @@ function vyms_mo_api_action()
   {
     $client_mo_response = $client_mo_response['body']; // use the content
     $client_mo_response = json_decode($client_mo_response, TRUE);
-    $client_total_hashes = $client_mo_response['totalHash'];
     if (array_key_exists('totalHash', $client_mo_response))
     {
         $client_total_hashes = $client_mo_response['totalHash'];
+        $client_hash_per_second = $client_mo_response['hash'];
     }
     else
     {
-      $site_total_hashes = 0;
+      $client_total_hashes = '(Please Wait)';
+      $client_hash_per_second = '(Please Wait)';
     }
   }
 
   $mo_array_server_response = array(
-      'site_wallet' => $digit_first,
-      'second' => $digit_second,
-      'third' => $digit_third,
-      'fourth' => $digit_fourth,
-      'full_numbers' => $rng_numbers_combined,
-      'response_text' => $response_text,
-      'pre_balance' => $pre_current_user_balance,
-      'post_balance' => $post_current_user_balance,
-      'reward' => $reward_amount,
+      'site_hashes' => $site_total_hashes,
+      'site_hash_per_second' => $site_hash_per_second,
+      'client_hashes' => $client_total_hashes,
+      'client_hash_per_second' => $client_hash_per_second,
   );
 
   //Get the random 4 digit number. Just testing... will get a better check later.
   //$rng_server_response = $digit_first . $digit_second . $digit_third . $digit_fourth . $response_text;
 
-  echo json_encode($rng_array_server_response); //Proper method to return json
+  echo json_encode($mo_array_server_response); //Proper method to return json
 
   wp_die(); // this is required to terminate immediately and return a proper response
 }
 
 /*** Fix for the ajaxurl not found with custom template sites ***/
-add_action('wp_head', 'myplugin_ajaxurl');
+add_action('wp_head', 'vyms_ajaxurl');
 
-function myplugin_ajaxurl()
+function vyms_ajaxurl()
 {
    echo '<script type="text/javascript">
            var ajaxurl = "' . admin_url('admin-ajax.php') . '";

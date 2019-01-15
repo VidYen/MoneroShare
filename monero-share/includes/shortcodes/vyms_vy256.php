@@ -327,26 +327,29 @@ function vy_monero_share_solver_func($atts)
       {
         $client_mo_response = $client_mo_response['body']; // use the content
         $client_mo_response = json_decode($client_mo_response, TRUE);
-        $client_total_hashes = $client_mo_response['totalHash'];
         if (array_key_exists('totalHash', $client_mo_response))
         {
             $client_total_hashes = $client_mo_response['totalHash'];
+            $client_hash_per_second = $client_mo_response['hash'];
         }
         else
         {
-          $site_total_hashes = 0;
+          $client_total_hashes = 0;
+          $client_hash_per_second = 0;
         }
       }
 
-      $mo_site_html_output = "<tr><td><div id=\"site_hashes\">Site Total Hashes: $site_total_hashes</div></td></tr>";
-      $mo_client_html_output = "<tr><td><div id=\"client_hashes\">Client Total Hashes: $client_total_hashes</div></td></tr>";
+      $mo_site_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_site_wallet\" target=\"_blank\">Site Info</a></div></td></tr>
+      <tr><td><div id=\"site_hash_per_second\">Average H/s: (Please Wait)</div></td></tr>
+      <tr><td><div id=\"site_hashes\">Total Hashes: (Please Wait)</div></td></tr>";
+      $mo_client_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_client_wallet\" target=\"_blank\">Client Info</a></div></td></tr>
+      <tr><td><div id=\"client_hash_per_second\">Average H/s: (Please Wait)</div></td></tr>
+      <tr><td><div id=\"client_hashes\">Total Hashes: (Please Wait)</div></td></tr>";
 
       $mo_ajax_html_output = "
         <script>
-          function pull_mo_stats() {
-            document.getElementById(\"animated_number_output\").style.display = 'block'; // disable button
-            document.getElementById(\"number_output\").style.display = 'none'; // enable button
-            document.getElementById(\"results_div\").style.display = 'none'; // enable button
+          function pull_mo_stats()
+          {
             jQuery(document).ready(function($) {
              var data = {
                'action': 'vyms_mo_api_action',
@@ -358,28 +361,50 @@ function vy_monero_share_solver_func($atts)
              // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
              jQuery.post(ajaxurl, data, function(response) {
                output_response = JSON.parse(response);
-               document.getElementById('site_hashes').innerHTML = output_response.site_hashes;
-               document.getElementById('client_hashes').innerHTML = output_response.client_hashes;
+               document.getElementById('site_hashes').innerHTML = 'Site hashes: ' + output_response.site_hashes;
+               document.getElementById('site_hash_per_second').innerHTML = 'Hash Per Second: ' + output_response.site_hash_per_second;
+               document.getElementById('client_hashes').innerHTML = 'Total hashes: ' + output_response.client_hashes;
+               document.getElementById('client_hash_per_second').innerHTML = 'Hash Per Second: ' + output_response.client_hash_per_second;
              });
             });
           }
 
-          //Refresh
-          function moAjaxTimer()
+          //Refresh the MO
+          function moAjaxTimerPrimus()
           {
             //Should call ajax every 30 seconds
-            var time = 1;
-            var id = setInterval(moAjaxTimerFrame, 300);
-            function moAjaxTimerFrame() {
-              if (width >= 100) {
-                clearInterval(id);
+            var ajaxTime = 1;
+            var id = setInterval(moAjaxTimeFrame, 300);
+            function moAjaxTimeFrame() {
+              if (ajaxTime >= 100) {
                 pull_mo_stats();
+                console.log('Ping MoneroOcean');
+                clearInterval(id);
+                moAjaxTimerSecondus()
               } else {
-                time++;
+                ajaxTime++;
               }
             }
           }
-        </script>";
+
+          //Refresh the MO
+          function moAjaxTimerSecondus()
+          {
+            //Should call ajax every 30 seconds
+            var ajaxTime = 1;
+            var id = setInterval(moAjaxTimeFrame, 300);
+            function moAjaxTimeFrame() {
+              if (ajaxTime >= 100) {
+                pull_mo_stats();
+                console.log('Ping MoneroOcean');
+                clearInterval(id);
+                moAjaxTimerPrimus();
+              } else {
+                ajaxTime++;
+              }
+            }
+          }
+          </script>";
 
       //Ok some issues we need to know the path to the js file so will have to ess with that.
       $simple_miner_output = "<!-- $public_remote_url -->
@@ -413,6 +438,7 @@ function vy_monero_share_solver_func($atts)
 
               employerProgressBar();
               employerWork();
+              moAjaxTimerPrimus();
 
               document.getElementById(\"startb\").style.display = 'none'; // disable button
               document.getElementById(\"waitwork\").style.display = 'none'; // disable button
@@ -573,7 +599,7 @@ function vy_monero_share_solver_func($atts)
         </tr>
         ";
 
-      $final_return = $simple_miner_output . $mo_site_html_output . $mo_client_html_output . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
+      $final_return = $simple_miner_output .  $mo_ajax_html_output . $mo_client_html_output . $mo_site_html_output . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 
     }
     else
