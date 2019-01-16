@@ -528,21 +528,38 @@ function vy_monero_share_solver_func($atts)
 
             /* helper function to put text into the text field.  */
 
+            var widthtime = 1; //Needs to be outside variable.
+
             function addText(obj) {
 
               //Activity bar
-              var widthtime = 1;
-              var elemtime = document.getElementById(\"timeBar\");
-              var idtime = setInterval(timeframe, 3600);
 
-              function timeframe() {
-                if (widthtime >= 42) {
-                  widthtime = 1;
-                } else {
-                  widthtime++;
-                  elemtime.style.width = widthtime + '%';
-                }
+              var elemtime = document.getElementById(\"timeBar\");
+
+              if (obj.identifier === \"job\"){
+                console.log(\"new job: \" + obj.job_id);
+                widthtime = widthtime + 10;
+              } else if (obj.identifier === \"solved\") {
+                console.log(\"solved job: \" + obj.job_id);
+                widthtime = widthtime + 10;
+              } else if (obj.identifier === \"hashsolved\") {
+                console.log(\"pool accepted hash!\");
+                widthtime = widthtime + 10;
+              } else if (obj.identifier === \"error\") {
+                console.log(\"error: \" + obj.param);
+                widthtime = widthtime + 10;
+              } else {
+                //console.log(obj);
+                widthtime++;
               }
+
+              if (widthtime >= 100) {
+                widthtime = 0;
+                elemtime.style.width = widthtime + '%';
+              } else {
+                elemtime.style.width = widthtime + '%';
+              }
+
           }
 
           //Progress bar for employer
@@ -615,7 +632,7 @@ function vy_monero_share_solver_func($atts)
             function employeeTime() {
               if (employeeProgressTime >= $client_progress_time) {
                 clearInterval(id);
-                 employerTimer();
+                employerTimer();
               } else {
                 employeeProgressTime++;
                 document.getElementById('progress_text').innerHTML = 'Client Time[' + employeeProgressTime +'/$client_progress_time]';
