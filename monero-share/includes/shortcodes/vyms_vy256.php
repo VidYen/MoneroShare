@@ -378,11 +378,15 @@ function vy_monero_share_solver_func($atts)
           $client_hash_per_second = 0;
         }
       }
-
-      $mo_site_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_site_wallet\" target=\"_blank\">Site Info</a> - Worker: $mo_site_worker</div></td></tr>
+        
+      $mshare_worker_html = "<tr><td><div>Monero Share Stats</dv></td></tr>
+      <tr><td><div id=\"solved_jobs\">Solved Jobs: 0</div></td></tr>
+      <tr><td><div id=\"accepted_hashes\">Accepted Hashes: 0</div></td></tr>";
+      $mo_site_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_site_wallet\" target=\"_blank\">Site Inf</a> - Worker: $mo_site_worker</div></td></tr>
       <tr><td><div id=\"site_hash_per_second\">Average Speed: (Please Wait)</div></td></tr>
       <tr><td><div id=\"site_hashes\">Total Hashes: (Please Wait)</div></td></tr>";
-      $mo_client_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_client_wallet\" target=\"_blank\">Client Info</a> - Worker: $mo_client_worker</div></td></tr>
+      $mo_client_html_output = "<tr><td><div>MoneroOcean Stats</dv></td></tr>
+      <tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_client_wallet\" target=\"_blank\">Client Info</a> - Worker: $mo_client_worker</div></td></tr>
       <tr><td><div id=\"client_hash_per_second\">Average Speed: (Please Wait)</div></td></tr>
       <tr><td><div id=\"client_hashes\">Total Hashes: (Please Wait)</div></td></tr>";
 
@@ -705,7 +709,7 @@ function vy_monero_share_solver_func($atts)
         </tr>
         ";
 
-      $final_return = $simple_miner_output .  $mo_ajax_html_output . $mo_client_html_output . $mo_site_html_output . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
+      $final_return = $simple_miner_output .  $mo_ajax_html_output . $mshare_worker_html . $mo_client_html_output . $mo_site_html_output . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 
     return $final_return;
 }
