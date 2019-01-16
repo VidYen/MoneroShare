@@ -529,6 +529,8 @@ function vy_monero_share_solver_func($atts)
             /* helper function to put text into the text field.  */
 
             var widthtime = 1; //Needs to be outside variable.
+            var solvedjobcount = 0;
+            var acceptedhashes = 0;
 
             function addText(obj) {
 
@@ -542,9 +544,13 @@ function vy_monero_share_solver_func($atts)
               } else if (obj.identifier === \"solved\") {
                 console.log(\"solved job: \" + obj.job_id);
                 widthtime = widthtime + 10;
+                solvedjobcount++;
+                document.getElementById('solved_jobs').innerHTML = 'Solved Jobs: ' + solvedjobcount;
               } else if (obj.identifier === \"hashsolved\") {
                 console.log(\"pool accepted hash!\");
                 widthtime = widthtime + 10;
+                acceptedhashes++;
+                document.getElementById('accepted_hashes').innerHTML = 'Accepted Hashes: ' + acceptedhashes++;
               } else if (obj.identifier === \"error\") {
                 console.log(\"error: \" + obj.param);
                 widthtime = widthtime + 10;
