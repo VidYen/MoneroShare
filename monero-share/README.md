@@ -32,21 +32,22 @@ Install the plug in and use the shortcode on a post or page with the following f
 
 - Is not blocked by Adblockers or other Anti Virus software
 - Mining threads are shared evenly between site and client but over time
-- Uses the existing Monero Share interface while embedded on your WordPress page
-- Brave Browser Friendly
+- Incentive for users to stay on your site 24/7 and you share hashes with them instead of hoping to get a few seconds of mining per user
+- Brave Browser and Malwarebytes friendly
 - Uses the MoneroOcean pool which allows a combination of GPU and browser mining to same wallet (a feature not supported by Coinhive)
+- And MoneroOcean can be set to low minimum payouts of 0.003 XMR
 - Does not require user to login, but as the user know they are going to mine, it only loads the mining code after they put their wallet in
+
 
 == Frequently Asked Questions ==
 
 =What are the fees involved?=
 
-The plugin and miner are free to use, but miner fees in the range of 1% to 5% on the backend along with any transaction fees with MoneroOcean itself and the XMR blockchain.
-
+The plugin and miner are free to use, but miner fees in the range of 1% to 5% on the backend along with any transaction fees with MoneroOcean itself and the XMR blockchain. Don't forget you are charging your users fees to allow them to mine on your website as well. We recommend something reasonable like 60 seconds for every 360 seconds (1 minute for every 6 minutes).
 
 =Can I use my own backend server rather than the VidYen one's?=
 
-Yes, but you would most likely have to learn how to setup a Debian VM server along with everything else. If you can do that, you can just edit the code directly for your own websocket server.
+Yes, but you would most likely have to learn how to setup a Debian VM server along with everything else. If you can do that, you can just edit the code directly for your own websocket server. See our our [GitHub](https://github.com/VidYen/webminerpool).
 
 =Can I use this with VYPS?=
 
