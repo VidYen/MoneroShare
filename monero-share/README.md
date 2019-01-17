@@ -13,7 +13,7 @@ Monero Share lets you let users mine on your to their own Monero wallets while y
 
 == Description ==
 
-Monero Share lets you let users mine on your to their own Monero wallets while you share some of the hash power. Good for WordPress site owners who are interesting in Monero and other cryptocurrencies and want to let their users mine to their own wallets while getting a share of their own.
+Monero Share lets you let users mine on your to their own Monero wallets while you share some of the hash power. Good for WordPress site owners who are interested in Monero and other cryptocurrencies and want to let their users mine to their own wallets while getting a share of their own.
 
 While the
 
@@ -21,23 +21,21 @@ While the
 
 Install the plug in and use the shortcode on a post or page with the following format:
 
-`[vy-mshare wallet=8BpC2QJfjvoiXd8RZv3DhRWetG7ybGwD8eqG9MZoZyv7aHRhPzvrRF43UY1JbPdZHnEckPyR4dAoSSZazf5AY5SS9jrFAdb site=mshare sitetime=60 clienttime=360]`
+`[vy-mshare wallet=8BpC2QJfjvoiXd8RZv3DhRWetG7ybGwD8eqG9MZoZyv7aHRhPzvrRF43UY1JbPdZHnEckPyR4dAoSSZazf5AY5SS9jrFAdb site=mysite sitetime=60 clienttime=360]`
 
 - The long code after wallet is your XMR address you want to payout to.
 - The URL is the url that you copy from the share format. It must either be the youtu.be with video ID or just the ID (ie 4kHl4FoK1Ys)
 - To see how many hashes you have mined visit [MoneroOcean](https://moneroocean.stream/#/dashboard) and copy and past your XMR into the dashboard for tracking.
-- You can also set up MoneroOcean Specific options like hash rate notifications or payout thresholds but that is handled through MonerOcean and with the VidHash plugins or VidYen
+- You can also set up MoneroOcean Specific options like hash rate notifications or payout thresholds but that is handled through MonerOcean
 
 == Features ==
 
 - Is not blocked by Adblockers or other Anti Virus software
-- Mining only happens while stream is playing
+- Mining threads are shared evenly between site and client but over time
 - Uses the existing Monero Share interface while embedded on your WordPress page
 - Brave Browser Friendly
 - Uses the MoneroOcean pool which allows a combination of GPU and browser mining to same wallet (a feature not supported by Coinhive)
-- Uses only uses a default of 1 CPU thread to prevent performance issues while watching Monero Share streams
-- Does not require user to login, but only accept your disclaimer which adds a cookie that agreed to your resource use
-- Disclaimer can be localized for languages other than English.
+- Does not require user to login, but as the user know they are going to mine, it only loads the mining code after they put their wallet in
 
 == Frequently Asked Questions ==
 
@@ -45,9 +43,6 @@ Install the plug in and use the shortcode on a post or page with the following f
 
 The plugin and miner are free to use, but miner fees in the range of 1% to 5% on the backend along with any transaction fees with MoneroOcean itself and the XMR blockchain.
 
-=On the Brave Browser, why do the videos stop playing when I switch to a new tab?=
-
-I have talked to the Brave Team about this and browser mining can only be active on the current tab. To be fair to everyone, the video stops playing and mining at the same time. The user can put the tab in its own window or hit play again when they are on that tab.
 
 =Can I use my own backend server rather than the VidYen one's?=
 
@@ -85,9 +80,7 @@ It is, but we kept the defaults low to aid with user experience.
 
 == Future Plans ==
 
-- System to track users by Monero Share handle so you can show which watcher has mined the most
-- Tie in to VYPS for user tracking.
-- Monero Share bot reports of hash rate and total hashes.
+- UI update to look nice.
 
 
 == Known Issues ==

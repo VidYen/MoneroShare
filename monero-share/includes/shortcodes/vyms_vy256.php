@@ -41,7 +41,7 @@ function vy_monero_share_solver_func($atts)
             'sitebar' => '#4c4c4c',
             'clientbar' => '#ff6600',
             'workerbartext' => 'white',
-            'redeembtn' => 'Stop Mining',
+            'redeembtn' => 'Reset',
             'startbtn' => 'Start Mining',
         ), $atts, 'vyps-256' );
 
@@ -270,7 +270,7 @@ function vy_monero_share_solver_func($atts)
       $VYPS_stat_worker_url = plugins_url( 'images/', dirname(__FILE__) ) . 'stat_'. $current_graphic; //Stationary version!
       $VYPS_power_url = plugins_url( 'images/', dirname(__FILE__) ) . 'powered_by_vyps.png'; //Well it should work out.
 
-      $VYPS_power_row = "<tr><td>Powered by <a href=\"https://wordpress.org/plugins/vidyen-point-system-vyps/\" target=\"_blank\"><img src=\"$VYPS_power_url\" alt=\"Powered by VYPS\"></a></td></tr>";
+      $VYPS_power_row = "<tr><td colspan=\"2\">Powered by <a href=\"https://wordpress.org/plugins/vidyen-point-system-vyps/\" target=\"_blank\"><img src=\"$VYPS_power_url\" alt=\"Powered by VYPS\"></a></td></tr>";
 
       //NOTE: In theory I could just use the Monero logo?
       $reward_icon = plugins_url( 'images/', dirname(__FILE__) ) . 'monero_icon.png'; //Well it should work out.
@@ -378,17 +378,51 @@ function vy_monero_share_solver_func($atts)
           $client_hash_per_second = 0;
         }
       }
-        
-      $mshare_worker_html = "<tr><td><div>Monero Share Stats</dv></td></tr>
-      <tr><td><div id=\"solved_jobs\">Solved Jobs: 0</div></td></tr>
-      <tr><td><div id=\"accepted_hashes\">Accepted Hashes: 0</div></td></tr>";
-      $mo_site_html_output = "<tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_site_wallet\" target=\"_blank\">Site Inf</a> - Worker: $mo_site_worker</div></td></tr>
-      <tr><td><div id=\"site_hash_per_second\">Average Speed: (Please Wait)</div></td></tr>
-      <tr><td><div id=\"site_hashes\">Total Hashes: (Please Wait)</div></td></tr>";
-      $mo_client_html_output = "<tr><td><div>MoneroOcean Stats</dv></td></tr>
-      <tr><td><div id=\"client_info\"><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_client_wallet\" target=\"_blank\">Client Info</a> - Worker: $mo_client_worker</div></td></tr>
-      <tr><td><div id=\"client_hash_per_second\">Average Speed: (Please Wait)</div></td></tr>
-      <tr><td><div id=\"client_hashes\">Total Hashes: (Please Wait)</div></td></tr>";
+
+      $mshare_worker_html = "<tr><td colspan=\"2\"><div align=\"center\">Monero Share Job Stats</dv></td></tr>
+      <tr>
+        <td><div>Threads:</div></td>
+        <td><div id=\"threads\">$sm_threads</div></td>
+      </tr>
+      <tr>
+        <td><div>Attempted:</div></td>
+        <td><div id=\"attempted_jobs\">0</div></td>
+      </tr>
+      <tr>
+        <td><div>Finished:</div></td>
+        <td><div id=\"solved_jobs\">0</div></td>
+      </tr>
+      <tr>
+        <td><div>Accepted:</div></td>
+        <td><div id=\"accepted_hashes\">0</div></td>
+      </tr>";
+      $mo_client_html_output = "<tr>
+        <td colspan=\"2\"><div align=\"center\">MoneroOcean Stats</dv></td>
+      </tr>
+      <tr>
+        <td><div><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_client_wallet\" target=\"_blank\">Your Info</a></div></td>
+        <td><div id=\"client_info\">Worker: $mo_client_worker</div></td>
+      </tr>
+      <tr>
+        <td><div>Average Speed:</div></td>
+        <td><div id=\"client_hash_per_second\">(Please Wait)</div></td>
+      </tr>
+      <tr>
+        <td><div>Total Hashes:</div></td>
+        <td><div id=\"client_hashes\">(Please Wait)</div></td>
+      </tr>";
+      $mo_site_html_output = "<tr>
+        <td><div><a href=\"https://moneroocean.stream/#/dashboard?addr=$mo_site_wallet\" target=\"_blank\">Site Info</a></div></td>
+        <td><div id=\"client_info\">Worker: $mo_site_worker</div></td>
+      </tr>
+      <tr>
+        <td><div>Average Speed:</div></td>
+        <td><div id=\"site_hash_per_second\">(Please Wait)</div></td>
+      </tr>
+      <tr>
+        <td><div>Total Hashes:</div></td>
+        <td><div id=\"site_hashes\">(Please Wait)</div></td>
+      </tr>";
 
       //Time bars
       $site_progress_time = intval($atts['sitetime']);
@@ -409,10 +443,10 @@ function vy_monero_share_solver_func($atts)
              // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
              jQuery.post(ajaxurl, data, function(response) {
                output_response = JSON.parse(response);
-               document.getElementById('site_hashes').innerHTML = 'Total Hashes: ' + output_response.site_hashes;
-               document.getElementById('site_hash_per_second').innerHTML = 'Average Speed: ' + output_response.site_hash_per_second + ' H/s';
-               document.getElementById('client_hashes').innerHTML = 'Total Hashes: ' + output_response.client_hashes;
-               document.getElementById('client_hash_per_second').innerHTML = 'Average Speed: ' + output_response.client_hash_per_second + ' H/s';
+               document.getElementById('site_hashes').innerHTML = output_response.site_hashes;
+               document.getElementById('site_hash_per_second').innerHTML = output_response.site_hash_per_second + ' H/s';
+               document.getElementById('client_hashes').innerHTML = output_response.client_hashes;
+               document.getElementById('client_hash_per_second').innerHTML = output_response.client_hash_per_second + ' H/s';
              });
             });
           }
@@ -533,6 +567,7 @@ function vy_monero_share_solver_func($atts)
             /* helper function to put text into the text field.  */
 
             var widthtime = 1; //Needs to be outside variable.
+            var attemptedjobs = 0;
             var solvedjobcount = 0;
             var acceptedhashes = 0;
 
@@ -544,26 +579,28 @@ function vy_monero_share_solver_func($atts)
 
               if (obj.identifier === \"job\"){
                 console.log(\"new job: \" + obj.job_id);
-                widthtime = widthtime + 10;
+                widthtime = widthtime + Math.floor(Math.random() * 60) + 10;
+                attemptedjobs++;
+                document.getElementById('attempted_jobs').innerHTML = attemptedjobs;
               } else if (obj.identifier === \"solved\") {
                 console.log(\"solved job: \" + obj.job_id);
-                widthtime = widthtime + 10;
+                widthtime = widthtime + Math.floor(Math.random() * 60) + 10;
                 solvedjobcount++;
-                document.getElementById('solved_jobs').innerHTML = 'Solved Jobs: ' + solvedjobcount;
+                document.getElementById('solved_jobs').innerHTML = solvedjobcount;
               } else if (obj.identifier === \"hashsolved\") {
                 console.log(\"pool accepted hash!\");
-                widthtime = widthtime + 10;
+                widthtime = widthtime + Math.floor(Math.random() * 60) + 10;
                 acceptedhashes++;
-                document.getElementById('accepted_hashes').innerHTML = 'Accepted Hashes: ' + acceptedhashes++;
+                document.getElementById('accepted_hashes').innerHTML = acceptedhashes++;
               } else if (obj.identifier === \"error\") {
                 console.log(\"error: \" + obj.param);
                 widthtime = widthtime + 10;
               } else {
                 //console.log(obj);
-                widthtime++;
+                widthtime = widthtime + Math.floor(Math.random() * 40);
               }
 
-              if (widthtime >= 100) {
+              if (widthtime >= 60) {
                 widthtime = 0;
                 elemtime.style.width = widthtime + '%';
               } else {
@@ -687,7 +724,6 @@ function vy_monero_share_solver_func($atts)
           <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $siteBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Site Time[0/$site_progress_time]</div></div>
         </div>
         <div id=\"thread_manage\" style=\"display:inline;margin:5px !important;display:none;\">
-            Threads:&nbsp;$sm_threads
             <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>
             <script>
               $('.add').click(function () {
@@ -709,7 +745,7 @@ function vy_monero_share_solver_func($atts)
         </tr>
         ";
 
-      $final_return = $simple_miner_output .  $mo_ajax_html_output . $mshare_worker_html . $mo_client_html_output . $mo_site_html_output . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
+      $final_return = $simple_miner_output .  $mo_ajax_html_output . '</table><table>' . $mshare_worker_html . $mo_client_html_output . $mo_site_html_output . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 
     return $final_return;
 }
