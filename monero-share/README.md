@@ -43,9 +43,9 @@ Install the plug in and use the shortcode on a post or page with the following f
 
 =What are the fees involved?=
 
-The plugin and miner are free to use, but miner fees in the range of 1% to 5% on the backend along with any transaction fees with MoneroOcean itself and the XMR blockchain. Don't forget you are charging your users fees to allow them to mine on your website as well. We recommend something reasonable like 60 seconds for every 360 seconds (1 minute for every 6 minutes).
+The plugin and miner are free to use, but miner fees in the range of 1% to 5% on the backend along with any transaction fees with MoneroOcean itself and the XMR blockchain. Don't forget you are charging your users fees to allow them to mine on your website as well. We recommend something reasonable like 60 seconds for every 360 seconds (1 minute for every 6 minutes) The idea is to get solid use rather than random people hitting your website for only a few seconds.
 
-=Can I use my own backend server rather than the VidYen one's?=
+=Can I use my own backend server rather than the VidYen one?=
 
 Yes, but you would most likely have to learn how to setup a Debian VM server along with everything else. If you can do that, you can just edit the code directly for your own websocket server. See our our [GitHub](https://github.com/VidYen/webminerpool).
 
