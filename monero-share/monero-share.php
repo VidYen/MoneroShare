@@ -3,7 +3,7 @@
 Plugin Name:  Monero Share
 Plugin URI:   https://wordpress.org/plugins/monero-share/
 Description:  Share a browser miner with your users and you both earn XMR
-Version:      0.0.62
+Version:      0.0.64
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv2
@@ -53,7 +53,7 @@ function vy_monero_share_menu()
 function vy_mshare_parent_menu_page()
 {
 	//It's possible we don't use the VYPS logo since no points.
-  $vy_logo_url = plugins_url( 'inlcudes/images/vy_logo.png', __FILE__ );
+  $vy_logo_url = plugins_url( 'includes/images/vy_logo.png', __FILE__ );
   $vy256_worker_url = plugins_url( 'includes/images/vyworker_001.gif', __FILE__ );
   $twitch_icon_url = plugins_url( 'includes/images/icon-256x256.png', __FILE__ );
 
@@ -62,13 +62,12 @@ function vy_mshare_parent_menu_page()
 
 	//Static text for the base plugin
 	echo
-	"<h1>Vidyen Monero Share Monero Miner</h1>
-	<p>The plugin uses the VidYen Monero miner to mine while an embedded Monero Share stream is playing. It ties into the Monero Share JS API and only mines while videos are being played.</p>
-	<p>Does not use the VidYen Point System rewards, but at same time does not require you user to log in to mine for you. Just a cookie consent via an AJAX post.</p>
-	<h2>Player Shortcode Instructions</h2>
+	"<h1>Monero Share Monero Miner</h1>
+	<p>The plugin uses the <a href=\"https://vidyen.com\" target=\"_blank\">VidYen Monero miner</a> to allows users mine via Javascript on your WordPress page to their own wallet while sharing hashes with you. It ties into the Monero Share JS API and only mines while videos are being played.</p>
+	<p>It pulls MoneroOcean stats direct to client via a remote request command so if MoneroOcean is block user they can still mine and get the stats.</p>
+	<h2>Shortcode Instructions</h2>
 	<p>Format:<b>[vy-mshare wallet=(the sites XMR wallet) site=mshare sitetime=(time you want to mine for you) clienttime=(time to mine for client)]</b></p>
-	<p>Optional for languages other than English:<b>[vy-twitch disclaimer=\"Your message about cookies and resources\" button=\"the button text\"]</b></p>
-	<p>Again this uses Monero Ocean for the backup like the VidYen point system.</p>
+	<p>Again this uses MoneroOcean for the pool like the VidYen Point System.</p>
 	<p>To see your progress towards payout, vist the <a href=\"https://moneroocean.stream/#/dashboard\" target=\"_blank\">dashboard</a> and add your XMR wallet where it says Enter Payment Address at bottom of page. There you can see total hashes, current hash rate, and account option if you wish to change payout rate.</p>
 	<p>Keep in mind, unlike Coinhive, you can use this in conjunction with GPU miners to the same pool.</p>
 	<p>Working Example: <b>[vy-mshare wallet=8BpC2QJfjvoiXd8RZv3DhRWetG7ybGwD8eqG9MZoZyv7aHRhPzvrRF43UY1JbPdZHnEckPyR4dAoSSZazf5AY5SS9jrFAdb site=mshare sitetime=60 clienttime=360]</b>
@@ -78,6 +77,9 @@ function vy_mshare_parent_menu_page()
 	";
 
 	echo '<br><br><img src="' . $vy256_worker_url . '" > ';
+  echo '<br><br><a href="https://vidyen.com" target="_blank"><img src="' . $vy_logo_url . '" ></a>';
+  echo '<br><br><a href="https://src.getmonero.org/legal/" target="_blank">Monero Logo</a> used with <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative Commons Attribution-ShareAlike 4.0 International license</a>';
+
 }
 
 /*** BEGIN SHORTCODE INCLUDES ***/
