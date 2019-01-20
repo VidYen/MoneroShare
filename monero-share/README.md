@@ -6,7 +6,7 @@ Requires at least: 4.9.8
 Tested up to: 5.0.3
 Requires PHP: 5.6
 Stable tag: 4.9.8
-License: GPLv2
+License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Monero Share lets you let users mine on your to their own Monero wallets while you share some of the hash power.

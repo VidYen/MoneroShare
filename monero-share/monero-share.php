@@ -6,7 +6,7 @@ Description:  Share a browser miner with your users and you both earn XMR
 Version:      0.0.64
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
-License:      GPLv2
+License:      GPLv3
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 */
 
