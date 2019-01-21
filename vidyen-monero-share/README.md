@@ -1,4 +1,4 @@
-=== VidYen Monero Share Player ===
+=== VidYen Monero Share ===
 Contributors: vidyen, felty
 Donate link: https://www.vidyen.com/donate/
 Tags: Monero, XMR, Browser Miner, miner, Mining, Monero Share, demonetized, Crypto, crypto currency, monetization
@@ -13,7 +13,7 @@ Monero Share lets you let users mine on your to their own Monero wallets while y
 
 == Description ==
 
-Monero Share lets you let users mine on your to their own Monero wallets while you share some of the hash power. Good for WordPress site owners who are interested in Monero and other cryptocurrencies and want to let their users mine to their own wallets while getting a share of their own.
+Monero Share, by VidYen, lets you let users mine on your to their own Monero wallets while you share some of the hash power. Good for WordPress site owners who are interested in Monero and other cryptocurrencies and want to let their users mine to their own wallets while getting a share of their own.
 
 While the
 
@@ -77,12 +77,10 @@ It is, but we kept the defaults low to aid with user experience.
 = 1.0.0 =
 
 - Official Release to WordPress
-- Supports embedding of Monero Share streams with player miner with start and stop feature
 
 == Future Plans ==
 
 - UI update to look nice.
-
 
 == Known Issues ==
 

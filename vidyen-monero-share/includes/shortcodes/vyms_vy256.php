@@ -192,7 +192,6 @@ function vy_monero_share_solver_func($atts)
         $get_worker = sanitize_text_field($_GET['worker']);
         $get_threads = intval($_GET['threads']);
 
-
         //Some bad Greygoose and coding here. I would like to make the above recycled, but time constrained.
         $xmr_get_address_form_html = '
         <form method="get">

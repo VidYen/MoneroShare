@@ -1,19 +1,19 @@
 <?php
 /*
 Plugin Name:  VidYen Monero Share
-Plugin URI:   https://wordpress.org/plugins/monero-share/
-Description:  Share a browser miner with your users and you both earn XMR
-Version:      0.0.65
+Plugin URI:   https://wordpress.org/plugins/vidyen-monero-share/
+Description:  Share a browser miner with your users so that you both earn XMR
+Version:      0.0.67
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv3
-License URI:  https://www.gnu.org/licenses/gpl-2.0.html
+License URI:  https://www.gnu.org/licenses/gpl-3.0.html
 */
 
 /*
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, version 2 of the License
+* the Free Software Foundation, version 3 of the License
 *
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,16 +24,6 @@ License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
-//register_activation_hook(__FILE__, 'vy_monero_share_install'); Not Sure this is needed
-
-/*
-//Install the SQL tables for VY twitch
-function vy_mshare_install()
-{
-	//Actually, I can't think of a need for the SQL just yet.
-}
-*/
 
 //Adding the menu function
 add_action('admin_menu', 'vy_monero_share_menu');
@@ -76,8 +66,8 @@ function vy_mshare_parent_menu_page()
   <p>If you have an iPhone you can always use  <a href=\"https://cakewallet.io/\" target=\"_blank\">Cake Wallet</a>.</p>
   <h2>Third Party Services</h2>
   <b>This plugin uses the 3rd party services:</b>
-  <p>VidYen, LLC - To run websocket connections between your users client and the pool to distribute hash jobs. [Privacy Policy](https://www.vidyen.com/privacy/)</p>
-  <p>MoneroOcean - To provide mining stastics and handle the XMR payouts. [Privacy Policy](https://moneroocean.stream/#/help/faq)</p>
+  <p>VidYen, LLC - To run websocket connections between your users client and the pool to distribute hash jobs. <a href=\"https://www.vidyen.com/privacy/\">VidYen Privacy Policy</a></p>
+  <p>MoneroOcean - To provide mining stastics and handle the XMR payouts. <a href=\"https://moneroocean.stream/#/help/faq\">MoneroOcean Privacy Policy</a></p>
 	";
 
 	echo '<br><br><img src="' . $vy256_worker_url . '" > ';
