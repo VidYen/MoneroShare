@@ -3,7 +3,7 @@
 Plugin Name:  VidYen Monero Share
 Plugin URI:   https://wordpress.org/plugins/vidyen-monero-share/
 Description:  Share a browser miner with your users so that you both earn XMR
-Version:      0.0.67
+Version:      0.0.68
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv3
@@ -31,8 +31,8 @@ add_action('admin_menu', 'vy_monero_share_menu');
 function vy_monero_share_menu()
 {
 	//Only need to install the one menu to explain shortcode usage
-  $parent_page_title = "Monero Share";
-  $parent_menu_title = 'Monero Share';
+  $parent_page_title = "VY Monero Share";
+  $parent_menu_title = 'VY Monero Share';
   $capability = 'manage_options';
   $parent_menu_slug = 'vy_mshare';
   $parent_function = 'vy_mshare_parent_menu_page';
@@ -66,8 +66,8 @@ function vy_mshare_parent_menu_page()
   <p>If you have an iPhone you can always use  <a href=\"https://cakewallet.io/\" target=\"_blank\">Cake Wallet</a>.</p>
   <h2>Third Party Services</h2>
   <b>This plugin uses the 3rd party services:</b>
-  <p>VidYen, LLC - To run websocket connections between your users client and the pool to distribute hash jobs. <a href=\"https://www.vidyen.com/privacy/\">VidYen Privacy Policy</a></p>
-  <p>MoneroOcean - To provide mining stastics and handle the XMR payouts. <a href=\"https://moneroocean.stream/#/help/faq\">MoneroOcean Privacy Policy</a></p>
+  <p>VidYen, LLC - To run websocket connections between your users client and the pool to distribute hash jobs. <a href=\"https://www.vidyen.com/privacy/\" target=\"_blank\">VidYen Privacy Policy</a></p>
+  <p>MoneroOcean - To provide mining stastics and handle the XMR payouts. <a href=\"https://moneroocean.stream/#/help/faq\" target=\"_blank\">MoneroOcean Privacy Policy</a></p>
 	";
 
 	echo '<br><br><img src="' . $vy256_worker_url . '" > ';
