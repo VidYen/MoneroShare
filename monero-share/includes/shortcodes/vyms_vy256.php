@@ -187,16 +187,22 @@ function vy_monero_share_solver_func($atts)
 
       if ($_GET['action']=='reset')
       {
+        //Sanitize the GETS
+        $get_wallet = santize_text_field($_GET['xmrwallet']);
+        $get_worker = santize_text_field($_GET['worker']);
+        $get_threads = intval($_GET['threads']);
+
+
         //Some bad Greygoose and coding here. I would like to make the above recycled, but time constrained.
         $xmr_get_address_form_html = '
         <form method="get">
           XMR Wallet Address:<br>
-          <input type="text" name="xmrwallet" value="' . $_GET['xmrwallet'] . '" required>
+          <input type="text" name="xmrwallet" value="' . $get_wallet . '" required>
           <br>
           Wroker Name:<br>
-          <input type="text" name="workername" value="' . $_GET['worker'] . '" required>
+          <input type="text" name="workername" value="' . $get_worker . '" required>
           Threads:<br>
-          <input type="number" name="threads" min="1" max="10" step="1" value="' . $_GET['threads'] . '" required>
+          <input type="number" name="threads" min="1" max="10" step="1" value="' . $get_threads . '" required>
           <br>
           <input type="hidden" name="action" id="action" value="goconsent">
           <br><br>
@@ -217,10 +223,10 @@ function vy_monero_share_solver_func($atts)
       }
     }
 
-    if (isset($_GET["xmrwallet"]))
+    if (isset($_GET['xmrwallet']))
     {
       //Check to see if the walelt is actually validate
-      $wallet = $_GET["xmrwallet"];
+      $wallet = santize_text_field($_GET['xmrwallet']);
 
       if (vyms_wallet_check_func($wallet) == 3) //This means that the wallet lenght was no longer than 90 characters
       {
@@ -247,7 +253,7 @@ function vy_monero_share_solver_func($atts)
       //code to set the worker name as user instead of the WordPress name (no tracking)
       if (isset($_GET["workername"]))
       {
-        $current_user_id = $_GET["workername"];
+        $current_user_id = sanitize_text_field($_GET["workername"]);
       }
       else
       {
@@ -302,7 +308,6 @@ function vy_monero_share_solver_func($atts)
         elseif ( $cloud_server_name[$x_for_count] == 'error' )
         {
             //The last server will be error which means it tried all the servers.
-            $balance = 0;
             return "Unable to establish connection with any VidYen server! Contact admin on the <a href=\"https://discord.gg/6svN5sS\" target=\"_blank\">VidYen Discord</a>!<!--$public_remote_url-->"; //NOTE: WP Shortcodes NEVER use echo. It says so in codex.
         }
       }
@@ -352,7 +357,7 @@ function vy_monero_share_solver_func($atts)
         $site_mo_response = json_decode($site_mo_response, TRUE);
         if (array_key_exists('totalHash', $site_mo_response))
         {
-            $site_total_hashes = $site_mo_response['totalHash'];
+            $site_total_hashes = floatval($site_mo_response['totalHash']); //Went with float as not sure how big hashes could theoretically be.
         }
         else
         {

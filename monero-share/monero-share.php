@@ -74,6 +74,10 @@ function vy_mshare_parent_menu_page()
   <p>Since this is running on our servers and we expanded the code, VidYen, LLC is the one handling the support. Please go to our <a href=\"https://www.vidyen.com/contact/\" target=\"_blank\">contact page</a> or if you need assistance immediatly, join the <a href=\"https://discord.gg/6svN5sS\" target=\"_blank\">VidYen Discord</a> and PM Felty. (It will ping my phone, so do not abuse. -Felty)</p></p>  <h2>Getting a Monero wallet</h2>
   <p>If you are completely new to Monero and need a wallet address, you can quickly get one at <a href=\"https://mymonero.com/\" target=\"_blank\">My Monero</a> or if you want a more technical or secure wallet visit <a href=\"https://ww.getmonero.org/\" target=\"_blank\">Get Monero</a> on how to create an enanched wallet.</p>
   <p>If you have an iPhone you can always use  <a href=\"https://cakewallet.io/\" target=\"_blank\">Cake Wallet</a>.</p>
+  <h2>Third Party Services</h2>
+  <b>This plugin uses the 3rd party services:</b>
+  <p>VidYen, LLC - To run websocket connections between your users client and the pool to distribute hash jobs. [Privacy Policy](https://www.vidyen.com/privacy/)</p>
+  <p>MoneroOcean - To provide mining stastics and handle the XMR payouts. [Privacy Policy](https://moneroocean.stream/#/help/faq)</p>
 	";
 
 	echo '<br><br><img src="' . $vy256_worker_url . '" > ';

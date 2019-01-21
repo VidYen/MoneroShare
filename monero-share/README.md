@@ -87,3 +87,9 @@ It is, but we kept the defaults low to aid with user experience.
 == Known Issues ==
 
 - Multiple tabs do not work and prior tab must be closed.
+
+== Third Party Services ==
+
+This plugin uses the 3rd party services:
+- VidYen, LLC - To run websocket connections between your users client and the pool to distribute hash jobs. [Privacy Policy](https://www.vidyen.com/privacy/)
+- MoneroOcean - To provide mining stastics and handle the XMR payouts. [Privacy Policy](https://moneroocean.stream/#/help/faq)
