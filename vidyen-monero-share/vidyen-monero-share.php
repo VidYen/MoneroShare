@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name:  Monero Share
+Plugin Name:  VidYen Monero Share
 Plugin URI:   https://wordpress.org/plugins/monero-share/
 Description:  Share a browser miner with your users and you both earn XMR
 Version:      0.0.64

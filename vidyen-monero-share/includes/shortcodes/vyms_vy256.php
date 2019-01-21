@@ -374,8 +374,8 @@ function vy_monero_share_solver_func($atts)
         $client_mo_response = json_decode($client_mo_response, TRUE);
         if (array_key_exists('totalHash', $client_mo_response))
         {
-            $client_total_hashes = $client_mo_response['totalHash'];
-            $client_hash_per_second = $client_mo_response['hash'];
+            $client_total_hashes = floatval($client_mo_response['totalHash']);
+            $client_hash_per_second = intval($client_mo_response['hash']); //If the hashrate is bigger than what an int can be, we got bigger problems
         }
         else
         {
