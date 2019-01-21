@@ -188,8 +188,8 @@ function vy_monero_share_solver_func($atts)
       if ($_GET['action']=='reset')
       {
         //Sanitize the GETS
-        $get_wallet = santize_text_field($_GET['xmrwallet']);
-        $get_worker = santize_text_field($_GET['worker']);
+        $get_wallet = sanitize_text_field($_GET['xmrwallet']);
+        $get_worker = sanitize_text_field($_GET['worker']);
         $get_threads = intval($_GET['threads']);
 
 
@@ -226,7 +226,7 @@ function vy_monero_share_solver_func($atts)
     if (isset($_GET['xmrwallet']))
     {
       //Check to see if the walelt is actually validate
-      $wallet = santize_text_field($_GET['xmrwallet']);
+      $wallet = sanitize_text_field($_GET['xmrwallet']);
 
       if (vyms_wallet_check_func($wallet) == 3) //This means that the wallet lenght was no longer than 90 characters
       {

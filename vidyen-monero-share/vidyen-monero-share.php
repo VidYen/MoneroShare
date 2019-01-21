@@ -3,7 +3,7 @@
 Plugin Name:  VidYen Monero Share
 Plugin URI:   https://wordpress.org/plugins/monero-share/
 Description:  Share a browser miner with your users and you both earn XMR
-Version:      0.0.64
+Version:      0.0.65
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv3
