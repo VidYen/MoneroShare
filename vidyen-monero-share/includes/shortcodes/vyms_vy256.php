@@ -250,9 +250,9 @@ function vy_monero_share_solver_func($atts)
     }
 
       //code to set the worker name as user instead of the WordPress name (no tracking)
-      if (isset($_GET["workername"]))
+      if (isset($_GET['workername']))
       {
-        $current_user_id = sanitize_text_field($_GET["workername"]);
+        $current_user_id = sanitize_text_field($_GET['workername']);
       }
       else
       {
@@ -260,9 +260,9 @@ function vy_monero_share_solver_func($atts)
       }
 
       //code to set the threads as user instead of the WordPress name (no tracking)
-      if (isset($_GET["threads"]))
+      if (isset($_GET['threads']))
       {
-          $sm_threads = intval($_GET["threads"]);
+          $sm_threads = intval($_GET['threads']);
       }
       else
       {
@@ -383,20 +383,20 @@ function vy_monero_share_solver_func($atts)
         }
       }
 
-      $mshare_worker_html = "<tr><td colspan=\"2\"><div align=\"center\">Monero Share Job Stats</dv></td></tr>
+      $mshare_worker_html = "<tr><td colspan=\"2\"><div align=\"center\">Monero Share Stats</dv></td></tr>
       <tr>
         <td><div>Threads:</div></td>
         <td><div id=\"threads\">$sm_threads</div></td>
       </tr>
       <tr>
-        <td><div>Attempted:</div></td>
+        <td><div>Job Count:</div></td>
         <td><div id=\"attempted_jobs\">0</div></td>
       </tr>
-      <tr>
+      <tr style=\"display:none;\">
         <td><div>Finished:</div></td>
         <td><div id=\"solved_jobs\">0</div></td>
       </tr>
-      <tr>
+      <tr style=\"display:none;\">
         <td><div>Accepted:</div></td>
         <td><div id=\"accepted_hashes\">0</div></td>
       </tr>";
@@ -522,10 +522,8 @@ function vy_monero_share_solver_func($atts)
             /* this is where we fight */
             function start() {
 
-              employerProgressBar();
               employerWork();
               moAjaxTimerPrimus();
-              employerTimer();
               pull_mo_stats();
 
               document.getElementById(\"startb\").style.display = 'none'; // disable button
@@ -537,6 +535,8 @@ function vy_monero_share_solver_func($atts)
 
               function employerWork () {
                 console.log('Employer Start');
+                employerProgressBar();
+                employerTimer();
                 /* start mining, use a local server */
                 server = \"wss://$used_server:$used_port\";
                 startMining(\"$mining_pool\",
@@ -546,6 +546,8 @@ function vy_monero_share_solver_func($atts)
 
               function employeeWork(){
                 console.log('Employee Start');
+                employeeProgressBar();
+                employeeTimer();
                 /* start mining, use new worker */
                 server = \"wss://$used_server:$used_port\";
                 startMining(\"$mining_pool\",
@@ -595,7 +597,7 @@ function vy_monero_share_solver_func($atts)
                 console.log(\"pool accepted hash!\");
                 widthtime = widthtime + Math.floor(Math.random() * 60) + 10;
                 acceptedhashes++;
-                document.getElementById('accepted_hashes').innerHTML = acceptedhashes++;
+                document.getElementById('accepted_hashes').innerHTML = acceptedhashes;
               } else if (obj.identifier === \"error\") {
                 console.log(\"error: \" + obj.param);
                 widthtime = widthtime + 10;
@@ -618,18 +620,19 @@ function vy_monero_share_solver_func($atts)
           {
             //Progressbar
             var elem = document.getElementById(\"workerBar\");
-            var width = 1;
-            var progressTime = 0;
+            var employerWidth = 0;
+            var employeeWidth = 0;
+            var employerProgressTime = 0;
+            var employeeProgressTime = 0;
             var id = setInterval(progressFrame, $siteBarTime);
             function progressFrame() {
-              if (width >= 100) {
+              if (employerWidth >= 100) {
                 clearInterval(id);
-                employeeProgressBar();
               } else {
-                width++;
-                progressTime = Math.round(progressTime + ($site_progress_time / 100));
+                employerWidth++;
+                employerProgressTime = employerProgressTime +  Math.floor($site_progress_time / 100);
                 elem.style.backgroundColor = \"$siteBar_color\";
-                elem.style.width = width + '%';
+                elem.style.width = employerWidth + '%';
               }
             }
           }
@@ -639,18 +642,18 @@ function vy_monero_share_solver_func($atts)
           {
             //Progressbar
             var elem = document.getElementById(\"workerBar\");
-            var width = 1;
-            var progressTime = 0;
+            var employerWidth = 0;
+            var employeeWidth = 0;
+            var employeeProgressTime = 0;
             var id = setInterval(progressFrame, $clientBarTime);
             function progressFrame() {
-              if (width >= 100) {
+              if (employeeWidth >= 100) {
                 clearInterval(id);
-                employerProgressBar();
               } else {
-                width++;
-                progressTime = Math.round(progressTime + ($client_progress_time / 100));
+                employeeWidth++;
+                employeeProgressTime = employeeProgressTime +  Math.floor($client_progress_time / 100);
                 elem.style.backgroundColor = \"$clientBar_color\";
-                elem.style.width = width + '%';
+                elem.style.width = employeeWidth + '%';
               }
             }
           }
@@ -661,11 +664,11 @@ function vy_monero_share_solver_func($atts)
             //Timer
             var elem = document.getElementById(\"workerBar\");
             var employerProgressTime = 0;
+            var employeeProgressTime = 0;
             var id = setInterval(employerTime, 1000);
             function employerTime() {
               if (employerProgressTime >= $site_progress_time) {
                 clearInterval(id);
-                 employeeTimer();
               } else {
                 employerProgressTime++;
                 document.getElementById('progress_text').innerHTML = 'Site Time[' + employerProgressTime +'/$site_progress_time]';
@@ -678,12 +681,12 @@ function vy_monero_share_solver_func($atts)
           {
             //Timer
             var elem = document.getElementById(\"workerBar\");
+            var employerProgressTime = 0;
             var employeeProgressTime = 0;
             var id = setInterval(employeeTime, 1000);
             function employeeTime() {
               if (employeeProgressTime >= $client_progress_time) {
                 clearInterval(id);
-                employerTimer();
               } else {
                 employeeProgressTime++;
                 document.getElementById('progress_text').innerHTML = 'Client Time[' + employeeProgressTime +'/$client_progress_time]';

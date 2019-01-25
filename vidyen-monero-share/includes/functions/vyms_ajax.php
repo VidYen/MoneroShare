@@ -18,11 +18,11 @@ function vyms_mo_api_action()
   //NOTE: I do not think there is a need for nonce as no user input to wordpress
 
   //Post gather from the AJAX post
-  $site_wallet = $_POST['site_wallet'];
-  $site_worker = $_POST['site_worker'];
+  $site_wallet = sanitize_text_field($_POST['site_wallet']);
+  $site_worker = sanitize_text_field($_POST['site_worker']);
 
-  $client_wallet = $_POST['client_wallet'];
-  $client_worker = $_POST['client_worker'];
+  $client_wallet = sanitize_text_field($_POST['client_wallet']);
+  $client_worker = sanitize_text_field($_POST['client_worker']);
 
   //Copy and paste from the Shortcodes
   //MO remote get info for client

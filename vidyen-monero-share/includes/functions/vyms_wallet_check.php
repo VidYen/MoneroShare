@@ -28,5 +28,5 @@ function vyms_wallet_check_func($wallet)
 		return 2; //Got a first character issue. Return 2
 	}
 
-	return 0; //No clude what happened. Return a general 0
+	return 0; //No clue what happened. Return a general 0
 }
