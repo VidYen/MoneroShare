@@ -7,7 +7,7 @@ Tested up to: 5.0.3
 Requires PHP: 5.6
 Stable tag: 4.9.8
 License: GPLv3
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Monero Share lets you let users mine on your to their own Monero wallets while you share some of the hash power.
 
@@ -61,26 +61,17 @@ You can ask us on our [discord](https://discord.gg/6svN5sS) but there are plenty
 
 VidYen is not affiliated with MoneroOcean. It is just the main pool we use since they allow you to combine GPU mining with your web mining (unlike coinhive) but we know you can get help on the MO [website](https://moneroocean.stream/#/help/faq) or [their discord](https://www.reddit.com/r/Monero/) and they will be glad to help you.
 
-=It doesn't really seem to be mining that much?=
-
-It is, but we kept the defaults low to aid with user experience.
 
 == Screenshots ==
 
-1. Shortcode example
-2. Disclaimer before accepting
-3. Output with Java Script via shortcode output
-4. Example on MO side.
+1. Splash screen for user to enter XMR wallet
+2. Mining interface with stats
 
 == Changelog ==
 
 = 1.0.0 =
 
 - Official Release to WordPress
-
-== Future Plans ==
-
-- UI update to look nice.
 
 == Known Issues ==
 
