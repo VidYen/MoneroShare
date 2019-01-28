@@ -15,7 +15,7 @@ Monero Share lets you let users mine on your to their own Monero wallets while y
 
 Monero Share, by VidYen, lets you let users mine on your to their own Monero wallets while you share some of the hash power. Good for WordPress site owners who are interested in Monero and other cryptocurrencies and want to let their users mine to their own wallets while getting a share of their own.
 
-While the
+[youtube https://youtu.be/kGmRTNnonpg]
 
 == Installation ==
 
