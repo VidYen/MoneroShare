@@ -40,10 +40,10 @@ function monero_share_io_solver_func($atts)
             'timebartext' => 'white',
             'sitebar' => '#4c4c4c',
             'clientbar' => '#ff6600',
-            'workerbartext' => 'white',
+            'workerbartext' => 'black',
             'redeembtn' => 'Reset',
             'startbtn' => 'Start Mining',
-            'maxthreads' => 6,
+            'maxthreads' => 9,
         ), $atts, 'vyps-256' );
 
     //NOTE: Where we are going we don't need $wpdb
@@ -164,8 +164,6 @@ function monero_share_io_solver_func($atts)
       <br>
       Wroker Name:<br>
       <input type="text" name="workername" value="worker" required>
-      Threads:<br>
-      <input type="number" name="threads" min="1" max="10" step="1" value="1" required>
       <br>
       <input type="hidden" name="action" id="action" value="goconsent">
       <br><br>
@@ -174,7 +172,7 @@ function monero_share_io_solver_func($atts)
       ';
 
     //Something that annoying me. Going to error check to see if someone messing with posts. NOTE: all three must be set
-    if (!isset($_GET['xmrwallet']) AND !isset($_GET['worker']) AND !isset($_GET['threads']))
+    if (!isset($_GET['xmrwallet']) AND !isset($_GET['worker']))
     {
       return $xmr_address_form_html; //Just return the above with defaults. Have no clue who is messing with the posts Else continue.
     }
@@ -198,8 +196,6 @@ function monero_share_io_solver_func($atts)
           <br>
           Wroker Name:<br>
           <input type="text" name="workername" value="' . $get_worker . '" required>
-          Threads:<br>
-          <input type="number" name="threads" min="1" max="10" step="1" value="' . $get_threads . '" required>
           <br>
           <input type="hidden" name="action" id="action" value="goconsent">
           <br><br>
@@ -243,28 +239,18 @@ function monero_share_io_solver_func($atts)
       }
       else
       {
-        $user_wallet = $wallet; //Extra jump but should be fine now
+        $mo_client_wallet = $wallet; //Extra jump but should be fine now
       }
     }
 
       //code to set the worker name as user instead of the WordPress name (no tracking)
       if (isset($_GET['workername']))
       {
-        $current_user_id = sanitize_text_field($_GET['workername']);
+        $mo_client_worker = sanitize_text_field($_GET['workername']);
       }
       else
       {
-        $current_user_id = 'worker';
-      }
-
-      //code to set the threads as user instead of the WordPress name (no tracking)
-      if (isset($_GET['threads']))
-      {
-        $sm_threads = intval($_GET['threads']);
-      }
-      else
-      {
-        $sm_threads = 1;
+        $mo_client_worker = 'worker';
       }
 
       //NOTE: FIX THIS!
@@ -277,9 +263,9 @@ function monero_share_io_solver_func($atts)
 
       //NOTE: In theory I could just use the Monero logo?
       $reward_icon = plugins_url( 'images/', dirname(__FILE__) ) . 'monero_icon.png'; //Well it should work out.
+      $reward_icon_html = '<img src="'.$reward_icon.'" alt="Monero" height="16" width="16">';
 
-      $miner_id = 'worker_' . $current_user_id . '_' . $user_wallet . '_' . $siteName;
-
+      $miner_id = 'worker_' . $mo_client_worker . '_' . $user_wallet . '_' . $siteName;
 
       //Get the url for the solver
       $vy256_client_folder_url = plugins_url( 'js/solver319/', __FILE__ );
@@ -300,15 +286,17 @@ function monero_share_io_solver_func($atts)
       $mo_site_worker = $siteName;
       $mo_site_wallet = $sm_site_key;
 
-      //MO remote get info for client
-      $mo_client_worker = $current_user_id;
-      $mo_client_wallet = $user_wallet;
-
-      //Need to fix it for the worker on MoneroOcean
-      if ($current_user_id != '')
-      {
-        $current_user_id = "." . $current_user_id;
-      }
+      //This has been bothering me
+      $start_button_html ="
+        <form id=\"startb\" style=\"display:block;width:100%;\"><input type=\"reset\" style=\"width:100%;\" onclick=\"start()\" value=\"$start_btn_text\"/></form>
+        <form id=\"stop\" style=\"display:none;width:100%;\" method=\"get\"><input type=\"hidden\" value=\"\" name=\"consent\"/>
+          <input type=\"hidden\" id=\"xmrwallet\" name=\"xmrwallet\" value=\"$mo_client_wallet\">
+          <input type=\"hidden\" id=\"worker\" name=\"worker\" value=\"$mo_client_worker\">
+          <input type=\"hidden\" id=\"threads\" name=\"threads\" value=\"$sm_threads\">
+          <input type=\"hidden\" id=\"reset\" name=\"action\" value=\"reset\">
+          <input type=\"submit\" style=\"width:100%;\" class=\"button - secondary\" value=\"$redeem_btn_text\"/>
+        </form>
+      ";
 
       /*** MoneroOcean Gets***/
       //Client gets
@@ -329,11 +317,6 @@ function monero_share_io_solver_func($atts)
           $client_hash_per_second = 0;
         }
       }
-
-      $start_button_html ="
-        <form id=\"startb\" style=\"display:block;width:100%;\"><input type=\"reset\" style=\"width:100%;\" onclick=\"start()\" value=\"$start_btn_text\"/></form>
-        <form id=\"stop\" style=\"display:none;width:100%;\" method=\"post\"><input type=\"hidden\" value=\"\" name=\"consent\"/><input type=\"submit\" style=\"width:100%;\" class=\"button - secondary\" value=\"$redeem_btn_text\"/></form>
-      ";
 
       $start_message_verbage = 'Press Start to begin.';
 
@@ -685,13 +668,13 @@ function monero_share_io_solver_func($atts)
             <div id=\"timeProgress\" style=\"display:none;width:100%; background-color: grey; \">
               <div id=\"timeBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"status-text\">Spooling up.</span><span id=\"wait\">.</span><span id=\"hash_rate\"></span></div></div>
             </div>
-            <div id=\"workerProgress\" style=\"width:100%; background-color: grey; \">
-              <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $workerBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Hashes[0]</div></div>
+            <div id=\"workerProgress\" style=\"width:100%; background-color: white; \">
+              <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $workerBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Valid Shares[$reward_icon_html 0] - Session Hashes[0] - Worker Hashes[0]</div></div>
             </div>
             <div id=\"thread_manage\" style=\"display:inline;margin:5px !important;display:block;\">
               <form style=\"display:inline;\"><input type=\"reset\" onclick=\"removethreads()\" value=\"-\"/></form>
               Threads:&nbsp;<span style=\"display:inline;\" id=\"thread_count\">0</span>
-              <form style=\"display:inline;position:absolute;right:50px;\"><input type=\"reset\" onclick=\"addthreads()\" value=\"-\"/></form>
+              <form style=\"display:inline;position:absolute;right:50px;\"><input type=\"reset\" onclick=\"addthreads()\" value=\"+\"/></form>
               <form method=\"post\" style=\"display:none;margin:5px !important;\" id=\"redeem\">
                 <input type=\"hidden\" value=\"\" name=\"redeem\"/>
                 <!--<input type=\"submit\" class=\"button-secondary\" value=\"Hashes\" onclick=\"return confirm('Did you want to sync your mined hashes with this site?');\" />-->
@@ -781,17 +764,11 @@ function monero_share_io_solver_func($atts)
                      mo_totalhashes = parseFloat(output_response.site_hashes);
                      if (mo_totalhashes > totalhashes)
                      {
-                       totalhashes = totalhashes + mo_totalhashes;
+                       //totalhashes = totalhashes + mo_totalhashes;
                        console.log('MO Hashes were greater.');
                      }
                      valid_shares = parseFloat(output_response.site_validShares);
-                     //progresspoints = totalhashes - ( Math.floor( totalhashes / $hash_per_point ) * $hash_per_point );
-                     //totalpoints = Math.floor( totalhashes / $hash_per_point );
-                     //document.getElementById('progress_text').innerHTML = 'Reward[' + '$reward_icon ' + totalpoints + '] - Progress[' + progresspoints + '/' + $hash_per_point + ']';
-                     document.getElementById('progress_text').innerHTML = 'Reward[' + '$reward_icon ' + valid_shares + '] - Hashes[' + totalhashes + ']';
-                     //document.getElementById('hash_rate').innerHTML = output_response.site_hash_per_second;
-                     //progresswidth = (( totalhashes / $hash_per_point  ) - Math.floor( totalhashes / $hash_per_point )) * 100;
-                     //elemworkerbar.style.width = progresswidth + '%';
+                     document.getElementById('progress_text').innerHTML = 'Valid Shares[$reward_icon_html ' + valid_shares + '] - Session Hashes[' + totalhashes + '] - Worker Hashes[' + mo_totalhashes + ']';
                    });
                   });
                 }
@@ -823,14 +800,14 @@ function monero_share_io_solver_func($atts)
                         //document.getElementById(\"sub\").disabled = false; //enable the - button
                       }
                       elemworkerbar.style.width = progresswidth + '%';
-                      document.getElementById('progress_text').innerHTML = 'Reward[' + '$reward_icon ' + valid_shares + '] - Hashes[' + totalhashes + ']';
+                      document.getElementById('progress_text').innerHTML = 'Valid Shares[$reward_icon_html ' + valid_shares + '] - Session Hashes[' + totalhashes + '] - Worker Hashes[' + mo_totalhashes + ']';
                     }
                     //Hash work
                     hash_difference = totalhashes - prior_totalhashes;
                     hash_per_second_estimate = (hash_difference)/mobile_use;
                     reported_hashes = Math.round(totalhashes / mobile_use);
                     prior_totalhashes = totalhashes;
-                    document.getElementById('progress_text').innerHTML = 'Reward[' + '$reward_icon ' + valid_shares + '] - Hashes[' + reported_hashes + ']';
+                    document.getElementById('progress_text').innerHTML = 'Valid Shares[$reward_icon_html ' + valid_shares + '] - Session Hashes[' + totalhashes + '] - Worker Hashes[' + mo_totalhashes + ']';
                     document.getElementById('hash_rate').innerHTML = ' ' + hash_per_second_estimate + ' H/s';
                     elemworkerbar.style.width = progresswidth + '%'
 
@@ -845,7 +822,9 @@ function monero_share_io_solver_func($atts)
                 }
                 </script>";
 
-      $final_return = '<table>' . $simple_miner_output . $mo_timer_html_output . '</table><table>' . $mshare_worker_html . $mo_client_html_output . $mo_site_html_output . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
+      $monero_ocean_link = '<tr><td><a href="https://moneroocean.stream/#/dashboard?addr='.$mo_client_wallet.'" target="_blank">MoneroOcean Graph</a></td></tr>';
+
+      $final_return = '<table>' . $simple_miner_output . $mo_timer_html_output . $monero_ocean_link . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 
     return $final_return;
 }
