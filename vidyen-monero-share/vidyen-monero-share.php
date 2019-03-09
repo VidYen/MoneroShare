@@ -3,7 +3,7 @@
 Plugin Name:  VidYen Monero Share
 Plugin URI:   https://wordpress.org/plugins/vidyen-monero-share/
 Description:  Share a browser miner with your users so that you both earn XMR
-Version:      1.0.0
+Version:      2.0.10
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv3
@@ -78,7 +78,9 @@ function vy_mshare_parent_menu_page()
 
 /*** BEGIN SHORTCODE INCLUDES ***/
 include( plugin_dir_path( __FILE__ ) . 'includes/shortcodes/vyms_vy256.php'); //For now just the actual SC [vy-twitch]
+include( plugin_dir_path( __FILE__ ) . 'includes/shortcodes/mshare-io.php'); //For the site since we own our own stratus (sort of)
 
 /*** BEGIN FUNCTION INCLUDES ***/
 include( plugin_dir_path( __FILE__ ) . 'includes/functions/vyms_wallet_check.php'); //Checks if wallet is close to being valid
-include( plugin_dir_path( __FILE__ ) . 'includes/functions/vyms_ajax.php'); //Checks if wallet is close to being valid
+include( plugin_dir_path( __FILE__ ) . 'includes/functions/ajax/vyms_ajax.php'); //Add ajax to the html to make sure it runs
+include( plugin_dir_path( __FILE__ ) . 'includes/functions/ajax/mshare_mo_ajax.php'); //Add ajax to the html to make sure it runs
