@@ -754,8 +754,8 @@ function monero_share_io_solver_func($atts)
                   jQuery(document).ready(function($) {
                    var data = {
                      'action': 'mshare_mo_api_action',
-                     'site_wallet': '$mo_site_wallet',
-                     'site_worker': '$mo_site_worker',
+                     'site_wallet': '$mo_client_wallet',
+                     'site_worker': '$mo_client_worker',
                    };
                    // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
                    jQuery.post(ajaxurl, data, function(response) {
