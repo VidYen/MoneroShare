@@ -91,33 +91,8 @@ function vy_monero_share_solver_func($atts)
     $custom_server_ws_port = $atts['wsport'];
     $custom_server_nx_port = $atts['nxport'];
 
-    $cloud_server_name = array(
-          '0' => 'vesalius.vy256.com',
-          '1' => 'daidem.vidhash.com',
-          '2' => $custom_server,
-          '3' => 'error',
-          '7' => '127.0.0.1'
-
-    );
-
-    //Had to use port 8443 with cloudflare due to it not liking port 8181 for websockets. The other servers are not on cloudflare at least not yet.
-    //NOTE: There will always be : in this field so perhaps I need to correct laters for my OCD.
-    $cloud_worker_port = array(
-          '0' => '8443',
-          '1' => '8443',
-          '2' => $custom_server_ws_port,
-          '3' => 'error',
-          '7' => '8181'
-    );
-
-
-    $cloud_server_port = array(
-          '0' => '',
-          '1' => '',
-          '2' => $custom_server_nx_port,
-          '3' => ':error',
-          '7' => ':8282'
-    );
+    $used_server = 'employee.moneroshare.io';
+    $used_port = '2053';
 
     //Here we set the arrays of possible graphics. Eventually this will be a slew of graphis. Maybe holidy day stuff even.
     $graphic_list = array(
@@ -125,12 +100,13 @@ function vy_monero_share_solver_func($atts)
           '1' => 'vyworker_001.gif',
           '2' => 'vyworker_002.gif',
           '3' => 'vyworker_003.gif',
+          '4' => 'vyworker_004.gif',
     );
 
     //By default the shortcode is rand unless specified to a specific. 0 turn it off to a blank gif. It was easier that way.
     if ($graphic_choice == 'rand')
     {
-      $rand_choice = mt_rand(1,2);
+      $rand_choice = mt_rand(1,4);
       $current_graphic = $graphic_list[$rand_choice]; //Originally this one line but may need to combine it later
     }
     else
@@ -282,38 +258,9 @@ function vy_monero_share_solver_func($atts)
 
       $miner_id = 'worker_' . $current_user_id . '_' . $sm_site_key_origin . '_' . $siteName;
 
-      //NOTE: I am going to have a for loop for each of the servers and it should check which one is up. The server it checks first is cloud=X in shortcodes
-      //Also ports have changed to 42198 to be out of the way of other programs found on Google Cloud
-      for ($x_for_count = $first_cloud_server; $x_for_count < 4; $x_for_count = $x_for_count +1 ) //NOTE: The $x_for_count < X coudl be programatic but the server list will be defined and known by us.
-      {
-        $remote_url = "http://" . $cloud_server_name[$x_for_count] . $cloud_server_port[$x_for_count]  ."/?userid=" . $miner_id;
-        $public_remote_url = "/?userid=" . $miner_id . " on count " . $x_for_count;
-        $remote_response =  wp_remote_get( esc_url_raw( $remote_url ) );
-
-        //return $remote_url; //debugging
-        if(array_key_exists('headers', $remote_response))
-        {
-            //Checking to see if the response is a number. If not, probaly something from cloudflare or ngix messing up. As is a loop should just kick out unless its the error round.
-            if( is_numeric($remote_response['body']) )
-            {
-              //We know we got a response so this is the server we will mine to
-              //NOTE: Servers may be on different ports as we move to cloudflare (8181 vs 8443)
-              //Below is diagnostic info for me.
-              $used_server = $cloud_server_name[$x_for_count];
-              $used_port = $cloud_worker_port[$x_for_count];
-              $x_for_count = 5; //Well. Need to escape out.
-            }
-        }
-        elseif ( $cloud_server_name[$x_for_count] == 'error' )
-        {
-            //The last server will be error which means it tried all the servers.
-            return "Unable to establish connection with any VidYen server! Contact admin on the <a href=\"https://discord.gg/6svN5sS\" target=\"_blank\">VidYen Discord</a>!<!--$public_remote_url-->"; //NOTE: WP Shortcodes NEVER use echo. It says so in codex.
-        }
-      }
-
       //Get the url for the solver
-      $vy256_client_folder_url = plugins_url( 'js/employer/', __FILE__ );
-      $vy256_site_folder_url = plugins_url( 'js/employer/', __FILE__ );
+      $vy256_client_folder_url = plugins_url( 'js/solver319/', __FILE__ );
+      $vy256_site_folder_url = plugins_url( 'js/solver319/', __FILE__ );
       //$vy256_solver_url = plugins_url( 'js/solver/miner.js', __FILE__ ); //Ah it was the worker.
 
       //Need to take the shortcode out. I could be wrong. Just rip out 'shortcodes/'
