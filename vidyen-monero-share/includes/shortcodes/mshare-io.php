@@ -262,8 +262,8 @@ function monero_share_io_solver_func($atts)
       $VYPS_power_row = "<tr><td colspan=\"2\">Powered by <a href=\"https://wordpress.org/plugins/vidyen-point-system-vyps/\" target=\"_blank\"><img src=\"$VYPS_power_url\" alt=\"Powered by VYPS\"></a></td></tr>";
 
       //NOTE: In theory I could just use the Monero logo?
-      $reward_icon = plugins_url( 'images/', dirname(__FILE__) ) . 'monero_icon.png'; //Well it should work out.
-      $reward_icon_html = '<img src="'.$reward_icon.'" alt="Monero" height="16" width="16">';
+      $reward_icon = plugins_url( 'images/', dirname(__FILE__) ) . 'moneroocean_icon.png'; //Well it should work out.
+      $reward_icon_html = '<a href="https://moneroocean.stream/#/dashboard?addr='.$mo_client_wallet.'" target="_blank"><img src="'.$reward_icon.'" alt="Monero" height="16" width="16"></a>';
 
       $miner_id = 'worker_' . $mo_client_worker . '_' . $user_wallet . '_' . $siteName;
 
@@ -822,7 +822,7 @@ function monero_share_io_solver_func($atts)
                 }
                 </script>";
 
-      $monero_ocean_link = '<tr><td><a href="https://moneroocean.stream/#/dashboard?addr='.$mo_client_wallet.'" target="_blank">MoneroOcean Graph</a></td></tr>';
+      $monero_ocean_link = '<tr><td>'.$reward_icon_html.' <a href="https://moneroocean.stream/#/dashboard?addr='.$mo_client_wallet.'" target="_blank">MoneroOcean Payout Options and Statistics</a> '.$reward_icon_html.'</td></tr>';
 
       $final_return = '<table>' . $simple_miner_output . $mo_timer_html_output . $monero_ocean_link . $VYPS_power_row . '</table>'; //The power row is a powered by to the other items. I'm going to add this to the other stuff when I get time.
 

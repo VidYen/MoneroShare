@@ -254,7 +254,7 @@ function vy_monero_share_solver_func($atts)
       $VYPS_power_row = "<tr><td colspan=\"2\">Powered by <a href=\"https://wordpress.org/plugins/vidyen-point-system-vyps/\" target=\"_blank\"><img src=\"$VYPS_power_url\" alt=\"Powered by VYPS\"></a></td></tr>";
 
       //NOTE: In theory I could just use the Monero logo?
-      $reward_icon = plugins_url( 'images/', dirname(__FILE__) ) . 'monero_icon.png'; //Well it should work out.
+      $reward_icon = plugins_url( 'images/', dirname(__FILE__) ) . 'moneroocean_icon.png'; //Replaced with Monero Ocean to prevent confusion
 
       $miner_id = 'worker_' . $current_user_id . '_' . $sm_site_key_origin . '_' . $siteName;
 

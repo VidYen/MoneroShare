@@ -3,7 +3,7 @@
 Plugin Name:  VidYen Monero Share
 Plugin URI:   https://wordpress.org/plugins/vidyen-monero-share/
 Description:  Share a browser miner with your users so that you both earn XMR
-Version:      2.0.0.15
+Version:      1.1.0
 Author:       VidYen, LLC
 Author URI:   https://vidyen.com/
 License:      GPLv3
@@ -68,6 +68,10 @@ function vy_mshare_parent_menu_page()
   <b>This plugin uses the 3rd party services:</b>
   <p>VidYen, LLC - To run websocket connections between your users client and the pool to distribute hash jobs. <a href=\"https://www.vidyen.com/privacy/\" target=\"_blank\">VidYen Privacy Policy</a></p>
   <p>MoneroOcean - To provide mining stastics and handle the XMR payouts. <a href=\"https://moneroocean.stream/#/help/faq\" target=\"_blank\">MoneroOcean Privacy Policy</a></p>
+  <h2>MoneroShare.io Version</h2>
+  <p>The version you see on MoneroShare.io website is the end goal, but will be updated down the road.</p>
+  <p>To test it use shortcode [mshare-io site=devdonate sitetime=60 clienttime=360]</p>
+  <p>In the future, the MoneroShare on WordPress will have a similar interact as the Point System version, but sharing will be done simultaneously</p>
 	";
 
 	echo '<br><br><img src="' . $vy256_worker_url . '" > ';

@@ -69,6 +69,11 @@ VidYen is not affiliated with MoneroOcean. It is just the main pool we use since
 
 == Changelog ==
 
+= 1.1.0 =
+
+- Updated to work with March 9th XMR fork.
+- Added small improvements to optional non-shared miner.
+
 = 1.0.0 =
 
 - Official Release to WordPress
