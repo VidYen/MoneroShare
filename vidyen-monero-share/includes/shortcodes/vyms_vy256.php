@@ -23,7 +23,6 @@ function vy_monero_share_solver_func($atts)
             'threads' => '2',
             'throttle' => '50',
             'password' => 'x',
-            'cloud' => 0,
             'server' => '', //This and the next three are used for custom servers if the end user wants to roll their own
             'wsport' => '', //The WebSocket Port
             'nxport' => '', //The nginx port... By default its (80) in the browser so if you run it on a custom port for hash counting you may do so here
@@ -60,7 +59,6 @@ function vy_monero_share_solver_func($atts)
     $sm_throttle = $atts['throttle'];
     //$password = $atts['password']; //Note: We will need to fix this but for now the password must remain x for the time being. Hardcoded even.
     $password = 'x';
-    $first_cloud_server = $atts['cloud'];
 
     //Check current page. We need this for a get.
     global $wp;
@@ -80,11 +78,6 @@ function vy_monero_share_solver_func($atts)
     //De-English-fication section. As we have a great deal of non-english admins, I wanted to add in options to change the miner text hereby
     $redeem_btn_text = $atts['redeembtn']; //By default 'Redeem'
     $start_btn_text = $atts['startbtn']; //By default 'Start Mining'
-
-    //Cloud Server list array. I suppose one could have a non-listed server, but they'd need to be running our versions
-    //the cloud is on a different port but that is only set in nginx and can be anything really as long as it goes to 8282
-    //I added cadia.vy256.com as a last stand. I realized if I'm switching servers cadia needs to be ready to stand.
-    //NOTE: Cadia stands.
 
     //Here is the user ports. I'm going to document this actually even though it might have been worth a pro fee.
     $custom_server = $atts['server'];
@@ -112,17 +105,6 @@ function vy_monero_share_solver_func($atts)
     else
     {
       $current_graphic = $graphic_list[$graphic_choice];
-    }
-
-    //NOTE: 7 is the number for if we want to do local host testing. Maybe for Monroe down the road.
-    if ($cloud_server_name == 7 )
-    {
-      //Some debug stuff put in for futre if testing on local host.
-    }
-
-    elseif ($first_cloud_server > 2 OR $first_cloud_server < 0 )
-    {
-      return "Error: Cloud set to invalid value. 0-1 only.";
     }
 
     if ($sm_site_key == '' AND $siteName == '')
