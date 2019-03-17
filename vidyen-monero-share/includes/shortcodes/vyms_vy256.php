@@ -122,7 +122,7 @@ function vy_monero_share_solver_func($atts)
       XMR Wallet Address:<br>
       <input type="text" name="xmrwallet" value="" required>
       <br>
-      Wroker Name:<br>
+      Worker Name:<br>
       <input type="text" name="workername" value="worker" required>
       Threads:<br>
       <input type="number" name="threads" min="1" max="10" step="1" value="1" required>
@@ -156,7 +156,7 @@ function vy_monero_share_solver_func($atts)
           XMR Wallet Address:<br>
           <input type="text" name="xmrwallet" value="' . $get_wallet . '" required>
           <br>
-          Wroker Name:<br>
+          Worker Name:<br>
           <input type="text" name="workername" value="' . $get_worker . '" required>
           Threads:<br>
           <input type="number" name="threads" min="1" max="10" step="1" value="' . $get_threads . '" required>

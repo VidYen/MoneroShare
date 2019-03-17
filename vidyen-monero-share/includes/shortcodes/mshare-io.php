@@ -162,7 +162,7 @@ function monero_share_io_solver_func($atts)
       XMR Wallet Address:<br>
       <input type="text" name="xmrwallet" value="" required>
       <br>
-      Wroker Name:<br>
+      Worker Name:<br>
       <input type="text" name="workername" value="worker" required>
       <br>
       <input type="hidden" name="action" id="action" value="goconsent">
@@ -194,7 +194,7 @@ function monero_share_io_solver_func($atts)
           XMR Wallet Address:<br>
           <input type="text" name="xmrwallet" value="' . $get_wallet . '" required>
           <br>
-          Wroker Name:<br>
+          Worker Name:<br>
           <input type="text" name="workername" value="' . $get_worker . '" required>
           <br>
           <input type="hidden" name="action" id="action" value="goconsent">
