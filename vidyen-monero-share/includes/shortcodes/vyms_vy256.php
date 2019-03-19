@@ -424,7 +424,6 @@ function vy_monero_share_solver_func($atts)
       //Ok some issues we need to know the path to the js file so will have to ess with that.
       $simple_miner_output = "<!-- $public_remote_url -->
       <table>
-        $site_warning
         <tr><td>
           <div id=\"waitwork\">
           <img src=\"$VYPS_stat_worker_url\"><br>
