@@ -4,7 +4,7 @@ Donate link: https://www.vidyen.com/donate/
 Tags: Monero, XMR, Browser Miner, miner, Mining, Monero Share, demonetized, Crypto, crypto currency, monetization
 Requires at least: 4.9.8
 Tested up to: 5.1.1
-Requires PHP: 5.6
+Requires PHP: 7.0
 Stable tag: 4.9.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
