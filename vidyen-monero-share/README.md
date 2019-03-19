@@ -69,6 +69,16 @@ VidYen is not affiliated with MoneroOcean. It is just the main pool we use since
 
 == Changelog ==
 
+= 1.1.2 =
+
+- Fix: Spelling on splash screen.
+- Fix: Removed variables no longer used to attempt to prevent display errors on custom themes.
+
+= 1.1.1 =
+
+- Test: Tested with 5.1.1
+- Fix: Removed some variables no longer used in server
+
 = 1.1.0 =
 
 - Updated to work with March 9th XMR fork.
