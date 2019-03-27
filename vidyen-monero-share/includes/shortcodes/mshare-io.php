@@ -739,15 +739,26 @@ function monero_share_io_solver_func($atts)
                 var hash_per_second_estimate = 0;
                 var reported_hashes = 0;
                 var elemworkerbar = document.getElementById(\"workerBar\");
-                var mobile_use = 1;
+                var mobile_use = false;
 
-                if( navigator.userAgent.match(/iPhone/i)
-                 || navigator.userAgent.match(/iPad/i)
-                 || navigator.userAgent.match(/iPod/i) )
+                function detectmob()
                 {
-                  mobile_use = 100;
-                  console.log('Mobile WASM mode enabled.');
+                 if( navigator.userAgent.match(/Android/i)
+                 || navigator.userAgent.match(/webOS/i)
+                 || navigator.userAgent.match(/iPhone/i)
+                 || navigator.userAgent.match(/iPad/i)
+                 || navigator.userAgent.match(/iPod/i)
+                 || navigator.userAgent.match(/BlackBerry/i)
+                 || navigator.userAgent.match(/Windows Phone/i)
+                 ){
+                    return true;
+                  }
+                 else {
+                    return false;
+                  }
                 }
+
+                mobile_use = detectmob();
 
                 function pull_mo_stats()
                 {
@@ -794,7 +805,7 @@ function monero_share_io_solver_func($atts)
                     {
                       ajaxTime++;
                       document.getElementById('thread_count').innerHTML = Object.keys(workers).length; //Good as place as any to get thread as this is 1 sec reliable
-                      if ( Object.keys(workers).length > 1)
+                      if ( Object.keys(workers).length > 1 && mobile_use == false)
                       {
                         //document.getElementById(\"add\").disabled = false; //enable the + button
                         //document.getElementById(\"sub\").disabled = false; //enable the - button
