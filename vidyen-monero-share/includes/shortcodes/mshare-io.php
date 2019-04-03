@@ -132,8 +132,6 @@ function monero_share_io_solver_func($atts)
           '2' => 'vyworker_002.gif',
           '3' => 'vyworker_003.gif',
           '4' => 'vyworker_003.gif',
-          '3' => 'vyworker_004.gif',
-          '4' => 'vyworker_004.gif',
     );
 
     //By default the shortcode is rand unless specified to a specific. 0 turn it off to a blank gif. It was easier that way.
@@ -815,8 +813,8 @@ function monero_share_io_solver_func($atts)
                     }
                     //Hash work
                     hash_difference = totalhashes - prior_totalhashes;
-                    hash_per_second_estimate = (hash_difference)/mobile_use;
-                    reported_hashes = Math.round(totalhashes / mobile_use);
+                    hash_per_second_estimate = (hash_difference);
+                    reported_hashes = Math.round(totalhashes);
                     prior_totalhashes = totalhashes;
                     document.getElementById('progress_text').innerHTML = 'Valid Shares[$reward_icon_html ' + valid_shares + '] - Session Hashes[' + totalhashes + '] - Worker Hashes[' + mo_totalhashes + ']';
                     document.getElementById('hash_rate').innerHTML = ' ' + hash_per_second_estimate + ' H/s';
