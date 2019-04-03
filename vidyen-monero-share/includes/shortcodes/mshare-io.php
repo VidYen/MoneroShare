@@ -660,13 +660,13 @@ function monero_share_io_solver_func($atts)
              <div>
               $start_button_html
             </div><br>
-            <div id=\"pauseProgress\" style=\"width:100%; background-color: grey; \">
+            <div id=\"pauseProgress\" style=\"position:relative; width:100%; background-color: grey; \">
               <div id=\"pauseBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"pause-text\">$start_message_verbage</span></div></div>
             </div>
-            <div id=\"timeProgress\" style=\"display:none;width:100%; background-color: grey; \">
+            <div id=\"timeProgress\" style=\"position:relative; display:none;width:100%; background-color: grey; \">
               <div id=\"timeBar\" style=\"width:1%; height: 30px; background-color: $timeBar_color;\"><div style=\"position: absolute; right:12%; color:$workerBar_text_color;\"><span id=\"status-text\">Spooling up.</span><span id=\"wait\">.</span><span id=\"hash_rate\"></span></div></div>
             </div>
-            <div id=\"workerProgress\" style=\"width:100%; background-color: white; \">
+            <div id=\"workerProgress\" style=\"position:relative; width:100%; background-color: white; \">
               <div id=\"workerBar\" style=\"width:0%; height: 30px; background-color: $workerBar_color; c\"><div id=\"progress_text\"style=\"position: absolute; right:12%; color:$workerBar_text_color;\">Valid Shares[$reward_icon_html 0] - Session Hashes[0] - Worker Hashes[0]</div></div>
             </div>
             <div id=\"thread_manage\" style=\"display:inline;margin:5px !important;display:block;\">
@@ -682,7 +682,7 @@ function monero_share_io_solver_func($atts)
             <td>
               <div class=\"slidecontainer\">
                 <p>CPU Power: <span id=\"cpu_stat\"></span>%</p>
-                <input type=\"range\" min=\"0\" max=\"100\" value=\"$sm_throttle\" class=\"slider\" id=\"cpuRange\">
+                <input style=\"width:100%;\" type=\"range\" min=\"0\" max=\"100\" value=\"$sm_throttle\" class=\"slider\" id=\"cpuRange\">
               </div>
             </td>
           </tr>
